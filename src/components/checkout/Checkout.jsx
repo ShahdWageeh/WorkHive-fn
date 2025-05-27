@@ -6,8 +6,9 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function Checkout() {
-  const { idS, idP } = useParams();
+  const { idS, idP, price } = useParams();
   const [availableTimes, setAvailableTimes] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("cash"); // Default to cash
   const { decoded, token } = useContext(AuthContext);
   const navigate = useNavigate();
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function Checkout() {
         customerId: decoded.id,
         providerId: +idP,
         serviceId: +idS,
+        paymentMethod, // Include payment method in payload
         ...values,
       };
       console.log(payload);
@@ -83,6 +85,20 @@ export default function Checkout() {
             <h2 className="text-3xl font-semibold text-blue-800 mb-4 text-center">
               Book a Service
             </h2>
+
+            {/* Price Display */}
+            <div className="bg-gray-50 p-4 rounded-lg mb-6">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 font-medium">
+                  Service Price:
+                </span>
+                <div className="flex items-center">
+                  <span className="text-2xl font-bold text-blue-800">
+                    ${price}
+                  </span>
+                </div>
+              </div>
+            </div>
 
             {/* Name */}
             <div>
@@ -146,9 +162,13 @@ export default function Checkout() {
                 <option value="" disabled selected hidden>
                   Select region
                 </option>
-                <option value="nasr city">Nasr City</option>
-                <option value="badr">Badr</option>
-                <option value="madinaty">Madinaty</option>
+                <option value="NC">New Cairo</option>
+                <option value="zayed">El-Sheikh Zayed</option>
+                <option value="sh">El-Sherouk</option>
+                <option value="fu">Future City</option>
+                <option value="rehab">El-Rehab</option>
+                <option value="badr">Badr City</option>
+                <option value="obour">El-Obour</option>
               </select>
               {formik.touched.region && formik.errors.region && (
                 <p className="text-red-500 text-sm">{formik.errors.region}</p>
@@ -199,6 +219,107 @@ export default function Checkout() {
                   {formik.errors.booking_time}
                 </p>
               )}
+            </div>
+
+            {/* Payment Method */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-700">
+                Payment Method
+              </label>
+              <div className="grid grid-cols-3 gap-4">
+                <div 
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                    paymentMethod === "cash"
+                    ? "border-blue-800 bg-blue-50 shadow-sm"
+                    : "border-gray-200 hover:border-blue-400"
+                  }`}
+                  onClick={() => setPaymentMethod("cash")}
+                >
+                  <input
+                    type="radio"
+                    id="cash"
+                    name="paymentMethod"
+                    value="cash"
+                    checked={paymentMethod === "cash"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="sr-only" // Hide the actual radio button
+                  />
+                  <label
+                    htmlFor="cash"
+                    className="flex flex-col items-center justify-center cursor-pointer"
+                  >
+                    <i className="fas fa-money-bill text-2xl text-green-600 mb-2"></i>
+                    <span className="text-sm font-medium">Cash</span>
+                  </label>
+                  {paymentMethod === "cash" && (
+                    <div className="absolute top-2 right-2">
+                      <i className="fas fa-check-circle text-blue-800"></i>
+                    </div>
+                  )}
+                </div>
+
+                <div 
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                    paymentMethod === "visa"
+                    ? "border-blue-800 bg-blue-50 shadow-sm"
+                    : "border-gray-200 hover:border-blue-400"
+                  }`}
+                  onClick={() => setPaymentMethod("visa")}
+                >
+                  <input
+                    type="radio"
+                    id="visa"
+                    name="paymentMethod"
+                    value="visa"
+                    checked={paymentMethod === "visa"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="sr-only"
+                  />
+                  <label
+                    htmlFor="visa"
+                    className="flex flex-col items-center justify-center cursor-pointer"
+                  >
+                    <i className="fab fa-cc-visa text-2xl text-blue-600 mb-2"></i>
+                    <span className="text-sm font-medium">Visa</span>
+                  </label>
+                  {paymentMethod === "visa" && (
+                    <div className="absolute top-2 right-2">
+                      <i className="fas fa-check-circle text-blue-800"></i>
+                    </div>
+                  )}
+                </div>
+
+                <div 
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                    paymentMethod === "wallet"
+                    ? "border-blue-800 bg-blue-50 shadow-sm"
+                    : "border-gray-200 hover:border-blue-400"
+                  }`}
+                  onClick={() => setPaymentMethod("wallet")}
+                >
+                  <input
+                    type="radio"
+                    id="wallet"
+                    name="paymentMethod"
+                    value="wallet"
+                    checked={paymentMethod === "wallet"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="sr-only"
+                  />
+                  <label
+                    htmlFor="wallet"
+                    className="flex flex-col items-center justify-center cursor-pointer"
+                  >
+                    <i className="fas fa-wallet text-2xl text-orange-600 mb-2"></i>
+                    <span className="text-sm font-medium">Wallet</span>
+                  </label>
+                  {paymentMethod === "wallet" && (
+                    <div className="absolute top-2 right-2">
+                      <i className="fas fa-check-circle text-blue-800"></i>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <button

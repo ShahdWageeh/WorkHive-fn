@@ -26,7 +26,7 @@ export default function ProviderServices({ ids }) {
           <h2 className="text-3xl mt-10 mb-14 font-semibold text-blue-800 text-center">
             Services
           </h2>
-          <div className="grid justify-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 sm:gap-12 lg:gap-10">
+          <div className="grid justify-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 ">
             {services?.data?.map((ser) => {
               return (
                 <>
@@ -47,7 +47,7 @@ export default function ProviderServices({ ids }) {
                     </div>
                     <div className="p-6 pt-0">
                       <Link
-                        to={`/checkout/${ser.id}/${ids.idP}`}
+                        to={`/checkout/${ser.id}/${ids.idP}/${ser.price}`}
                         data-ripple-light="true"
                         type="button"
                         className="select-none rounded-lg bg-blue-800 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:bg-blue-700 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"

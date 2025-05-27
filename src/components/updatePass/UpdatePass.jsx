@@ -11,7 +11,7 @@ export default function UpdatePass() {
   let [errorMsg, setErrorMsg] = useState(null);
   let [successMsg, setSuccessMsg] = useState(null);
   let [loading, setLoading] = useState(false);
-  const { token } = useContext(AuthContext);
+  const { token, setToken } = useContext(AuthContext);
   const [ShowPass, setShowPass] = useState({
     old: false,
     new: false,
@@ -33,6 +33,8 @@ export default function UpdatePass() {
       setSuccessMsg(res.data.status);
       if (res.data.status == "success") {
         toast.success("Your Data updated successfully");
+        localStorage.setItem('token', res?.data?.token)
+        setToken(res.data.token)
       }
       console.log(res);
     } catch (err) {

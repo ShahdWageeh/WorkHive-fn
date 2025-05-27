@@ -18,6 +18,7 @@ import Checkout from "./components/checkout/Checkout";
 import UserProfile from "./components/userProfile/UserProfile";
 import UpdateData from "./components/updateData/UpdateData";
 import UpdatePass from "./components/updatePass/UpdatePass";
+import JoinProvider from "./components/joinProvider/JoinProvider";
 const routes = createBrowserRouter([
   {path:'', element: <Layout/>, children:[
     {path:'', element: <Home/>},
@@ -31,10 +32,10 @@ const routes = createBrowserRouter([
     {path:'userProfile', element: <UserProfile/>},
     {path:'updateData', element: <UpdateData/>},
     {path:'updatePassword', element: <UpdatePass/>},
-    {path:'checkout/:idS/:idP', element: <Checkout/>},
+    {path:'checkout/:idS/:idP/:price', element: <Checkout/>},
     {path:'serviceProviders/:idC', element: <ServiceProviders/>},
     {path:'providerProfile/:idC/:idP', element: <ProviderProfile/>},
-
+    {path:'joinProvider', element: <JoinProvider/>},
   ]}
 ])
 function App() {

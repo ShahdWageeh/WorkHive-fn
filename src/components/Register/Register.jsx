@@ -156,10 +156,13 @@ export default function Register() {
                     <option defaultValue hidden>
                       Choose a Region
                     </option>
-                    <option value="US">United States</option>
-                    <option value="CA">Canada</option>
-                    <option value="FR">France</option>
-                    <option value="DE">Germany</option>
+                    <option value="NC">New Cairo</option>
+                    <option value="zayed">El-Sheikh Zayed</option>
+                    <option value="sh">El-Sherouk</option>
+                    <option value="fu">Future City</option>
+                    <option value="rehab">El-Rehab</option>
+                    <option value="badr">Badr City</option>
+                    <option value="obour">El-Obour</option>
                   </select>
                 </div>
                 {Formik.errors.address && Formik.touched.address ? (

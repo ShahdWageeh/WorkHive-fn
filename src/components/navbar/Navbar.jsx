@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import avatar from "../../assets/images/avatar.svg";
 import logo from "../../assets/images/logo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "./../context/AuthContext";
 
 export default function Navbar() {
@@ -17,12 +17,12 @@ export default function Navbar() {
       <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 right-0 shadow-md z-[999]">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           {/* logo */}
-          <a
-            href="https://flowbite.com/"
+          <Link
+            to="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src={logo} className="w-[180px]" alt="Flowbite Logo" />
-          </a>
+          </Link>
           {/* right side */}
           <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
             {token ? (
@@ -57,28 +57,40 @@ export default function Navbar() {
                   </div>
                   <ul className="py-2" aria-labelledby="user-menu-button">
                     <li>
-                      <Link
-                        to={'userProfile'}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                      <NavLink
+                        to="userProfile"
+                        className={({ isActive }) =>
+                          `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
+                            isActive ? "bg-gray-100 text-blue-700" : ""
+                          }`
+                        }
                       >
                         Dashboard
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link
-                        to={'updateData'}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                      <NavLink
+                        to="updateData"
+                        className={({ isActive }) =>
+                          `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
+                            isActive ? "bg-gray-100 text-blue-700" : ""
+                          }`
+                        }
                       >
                         Update your Data
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link
-                        to={'updatePassword'}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                      <NavLink
+                        to="updatePassword"
+                        className={({ isActive }) =>
+                          `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
+                            isActive ? "bg-gray-100 text-blue-700" : ""
+                          }`
+                        }
                       >
                         Update your Password
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
                       <button
@@ -93,20 +105,26 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  to={"login"}
-                  className="block py-2 px-3 font-semibold text-black rounded-sm md:bg-transparent hover:text-blue-700 hover:underline md:dark:text-blue-500"
-                  aria-current="page"
+                <NavLink
+                  to="login"
+                  className={({ isActive }) =>
+                    ` hidden md:block py-2 px-3 font-semibold rounded-sm md:bg-transparent hover:text-blue-700 hover:underline md:dark:text-blue-500 ${
+                      isActive ? "text-blue-700" : "text-black"
+                    }`
+                  }
                 >
                   Login
-                </Link>
-                <Link
-                  to={"register"}
-                  type="button"
-                  className="text-white bg-blue-800 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                </NavLink>
+                <NavLink
+                  to="register"
+                  className={({ isActive }) =>
+                    `text-white ${
+                      isActive ? "bg-blue-700" : "bg-blue-800"
+                    } hover:bg-blue-700 hidden md:block focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`
+                  }
                 >
                   Sign Up
-                </Link>
+                </NavLink>
               </>
             )}
             <button
@@ -141,37 +159,87 @@ export default function Navbar() {
           >
             <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
               <li>
-                <Link
-                  to={""}
-                  className="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
-                  aria-current="page"
+                <NavLink
+                  to=""
+                  className={({ isActive }) =>
+                    `block py-2 px-3 rounded-sm md:p-0 ${
+                      isActive
+                        ? "text-blue-700 md:text-blue-700"
+                        : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500"
+                    }`
+                  }
+                  end
                 >
                   Home
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                <NavLink
+                  to="about"
+                  className={({ isActive }) =>
+                    `block py-2 px-3 rounded-sm md:p-0 ${
+                      isActive
+                        ? "text-blue-700 md:text-blue-700"
+                        : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500"
+                    }`
+                  }
                 >
                   About
-                </a>
+                </NavLink>
               </li>
               <li>
-                <Link
-                  to={'categories'}
-                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                <NavLink
+                  to="categories"
+                  className={({ isActive }) =>
+                    `block py-2 px-3 rounded-sm md:p-0 ${
+                      isActive
+                        ? "text-blue-700 md:text-blue-700"
+                        : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500"
+                    }`
+                  }
                 >
                   Categories
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
-                  to={'contactUs'}
-                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                <NavLink
+                  to="contactUs"
+                  className={({ isActive }) =>
+                    `block py-2 px-3 rounded-sm md:p-0 ${
+                      isActive
+                        ? "text-blue-700 md:text-blue-700"
+                        : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500"
+                    }`
+                  }
                 >
                   Contact
-                </Link>
+                </NavLink>
+              </li>
+              <li>
+                {token ? null : (
+                  <>
+                    <NavLink
+                      to="login"
+                      className={({ isActive }) =>
+                        ` block md:hidden py-2 px-3 font-semibold rounded-sm md:bg-transparent hover:text-blue-700 hover:underline md:dark:text-blue-500 ${
+                          isActive ? "text-blue-700" : "text-black"
+                        }`
+                      }
+                    >
+                      Login
+                    </NavLink>
+                    <NavLink
+                      to="register"
+                      className={({ isActive }) =>
+                        `text-white ${
+                          isActive ? "bg-blue-700" : "bg-blue-800"
+                        } hover:bg-blue-700 md:hidden focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`
+                      }
+                    >
+                      Sign Up
+                    </NavLink>
+                  </>
+                )}
               </li>
             </ul>
           </div>

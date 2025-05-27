@@ -8,6 +8,7 @@ export default function useProviders() {
   const [catName, setCatName] = useState();
   const [onePro, setOnePro] = useState()
   const [review, setReview] = useState()
+  let [loading, setLoading] = useState(true)
   async function getServiceProviders() {
     try {
       const res = await axios.get(
@@ -16,6 +17,7 @@ export default function useProviders() {
       console.log(res.data.data);
       setProviders(res.data.data);
       setCatName(res?.data?.data[0]?.category.name);
+      setLoading(false)
     } catch (err) {
       console.log(err);
     }
@@ -25,6 +27,7 @@ export default function useProviders() {
       const res = await axios.get(`https://work-hive-project.vercel.app/api/v1/categories/${idC}/service-providers/${idP}`)
       // console.log(res.data);
       setOnePro(res.data)
+      setLoading(false)
     }catch(err){
       console.log(err);
     }
@@ -34,10 +37,11 @@ export default function useProviders() {
     try{
       const res = await axios.get(`https://work-hive-project.vercel.app/api/v1/reviews/provider/${idP}`)
       setReview(res.data)
+      setLoading(false)
     }catch(err){
       console.log(err);
       
     }
   }
-  return {getServiceProviders, catName, providers, getOneProvider, onePro, review, getProvidersReview};
+  return {getServiceProviders, catName, providers, getOneProvider, onePro, review, getProvidersReview, loading};
 }

@@ -36,16 +36,16 @@ export default function HomeReviews() {
 
           {/* Testimonial Content */}
           <div className="w-full lg:w-1/2">
-            <p className="text-blue-950 font-semibold text-xl">
-              Testimonials
-            </p>
+            <p className="text-blue-950 font-semibold text-xl">Testimonials</p>
             <h2 className="text-4xl font-bold text-gray-800 mb-4">
               Our Clients <span className="text-blue-800">Love Us.</span>
             </h2>
             <p className="text-gray-600 mb-6">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad
-              minim veniam.
+              Discover what our satisfied customers have to say about their
+              experience with our service providers. From home repairs to
+              maintenance services, we take pride in connecting you with skilled
+              professionals who deliver quality work and exceptional customer
+              service.
             </p>
             <Swiper
               slidesPerView={1}

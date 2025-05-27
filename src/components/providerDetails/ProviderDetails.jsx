@@ -60,7 +60,7 @@ export default function ProviderDetails({ pro, rev }) {
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-1 sm:mt-5 lg:mt-0">
+            <div className="lg:col-span-1 sm:mt-5 lg:mt-0 mt-10 lg:mt-0">
               <h1 className="text-3xl mb-4 font-semibold text-blue-800">
                 Reviews
               </h1>
