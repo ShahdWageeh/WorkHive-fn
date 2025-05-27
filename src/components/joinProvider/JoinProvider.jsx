@@ -173,7 +173,7 @@ export default function JoinProvider() {
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Full Name
+                  Full Name الاسم الكامل
                 </label>
                 <div className="relative">
                   <i className="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -198,7 +198,7 @@ export default function JoinProvider() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Email Address
+                  Email Address البريد الإلكتروني
                 </label>
                 <div className="relative">
                   <i className="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -223,7 +223,7 @@ export default function JoinProvider() {
                   htmlFor="phone"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Phone Number
+                  Phone Number رقم الهاتف
                 </label>
                 <div className="relative">
                   <i className="fas fa-phone absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -248,7 +248,7 @@ export default function JoinProvider() {
                   htmlFor="age"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Age
+                  Age السن
                 </label>
                 <div className="relative">
                   <i className="fas fa-birthday-cake absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -278,7 +278,7 @@ export default function JoinProvider() {
             {/* Profile Photo Upload */}
             <div className="space-y-4">
               <label className="block text-sm font-medium text-gray-700">
-                Profile Photo
+                Profile Photo صورة شخصية
               </label>
               <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors">
                 <div className="space-y-1 text-center">
@@ -329,7 +329,7 @@ export default function JoinProvider() {
               {/* Front ID */}
               <div className="space-y-4">
                 <label className="block text-sm font-medium text-gray-700">
-                  ID Front Side
+                  ID Front Side صورة البطاقة الشخصية(الامامية)
                 </label>
                 <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors">
                   <div className="space-y-1 text-center">
@@ -375,7 +375,7 @@ export default function JoinProvider() {
               {/* Back ID */}
               <div className="space-y-4">
                 <label className="block text-sm font-medium text-gray-700">
-                  ID Back Side
+                  ID Back Side صورة البطاقة الشخصية(الخلفية)
                 </label>
                 <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors">
                   <div className="space-y-1 text-center">
@@ -433,7 +433,7 @@ export default function JoinProvider() {
                   htmlFor="region"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Region of Work
+                  Region of Work مناطق العمل
                 </label>
                 <div className="relative">
                   <i className="fas fa-map-marker-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -467,7 +467,7 @@ export default function JoinProvider() {
                   htmlFor="category"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Working Category
+                  Working Category المهنة
                 </label>
                 <div className="relative">
                   <i className="fas fa-tools absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -499,7 +499,7 @@ export default function JoinProvider() {
                   htmlFor="experience"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Years of Experience
+                  Years of Experience سنوات الخبرة
                 </label>
                 <div className="relative">
                   <i className="fas fa-briefcase absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -523,7 +523,7 @@ export default function JoinProvider() {
             {/* Working Days */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Working Days
+                Working Days الأيام المتاحة للعمل
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
@@ -590,7 +590,7 @@ export default function JoinProvider() {
                 </div>
                 <div className="flex-1">
                   <label htmlFor="terms" className="font-medium text-gray-700">
-                    Terms and Conditions
+                    Terms and Conditions الشروط والأحكام
                   </label>
                   <p className="text-sm text-gray-500 mt-1">
                     By selecting this, you agree to our{" "}
@@ -615,7 +615,7 @@ export default function JoinProvider() {
             {/* Summary */}
             <div className="bg-blue-50 p-6 rounded-lg">
               <h3 className="text-lg font-medium text-blue-800 mb-4">
-                Application Summary
+                Application Summary ملخص التقديم
               </h3>
               <div className="space-y-2">
                 <p className="text-sm text-blue-700">
