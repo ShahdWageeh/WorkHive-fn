@@ -38,7 +38,7 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className="hover:text-blue-400 transition-colors">
+                  <Link to="/joinProvider" className="hover:text-blue-400 transition-colors">
                     Join as Provider
                   </Link>
                 </li>
