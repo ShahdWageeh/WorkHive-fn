@@ -37,6 +37,7 @@ export default function Checkout() {
       region: "",
       booking_date: "",
       booking_time: "",
+      paymentMethod: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
@@ -47,6 +48,7 @@ export default function Checkout() {
       region: Yup.string().required("Required"),
       booking_date: Yup.string().required("Required"),
       booking_time: Yup.string().required("Required"),
+      paymentMethod: Yup.string().required("Required"),
     }),
     onSubmit: async (values, { resetForm }) => {
       const payload = {
@@ -242,7 +244,7 @@ export default function Checkout() {
                     value="cash"
                     checked={paymentMethod === "cash"}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="sr-only" // Hide the actual radio button
+                    className="sr-only"
                   />
                   <label
                     htmlFor="cash"
@@ -320,6 +322,25 @@ export default function Checkout() {
                   )}
                 </div>
               </div>
+
+              {/* Wallet Payment Information */}
+              {paymentMethod === "wallet" && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <i className="fas fa-info-circle text-blue-600"></i>
+                    <p className="font-medium text-blue-800">Wallet Payment Details:</p>
+                  </div>
+                  <p className="text-blue-700 font-medium mb-2">
+                    Payment Number: <span className="text-blue-900">01067943731</span>
+                  </p>
+                  <div className="flex items-start space-x-2 text-orange-600">
+                    <i className="fas fa-exclamation-triangle mt-1"></i>
+                    <p className="text-sm">
+                      Note: If the payment is not made within an hour from completing the booking, it will be automatically canceled.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <button

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useCategories from "../../Hooks/useCategories";
+import axios from "axios";
 
 export default function JoinProvider() {
   const [step, setStep] = useState(1);
@@ -14,9 +15,16 @@ export default function JoinProvider() {
     getCategories();
   }, []);
 
-  useEffect(() => {
-    console.log(catData);
-  }, [catData]);
+  async function submitForm(values) {
+    try {
+      const res = await axios.post('https://work-hive-project.vercel.app/api/v1/joinUs', values, {headers: {
+        'Content-Type': 'multipart/form-data',
+      }})
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -25,11 +33,11 @@ export default function JoinProvider() {
       phone: "",
       age: "",
       photo: null,
-      frontId: null,
-      backId: null,
+      front_id: null,
+      back_id: null,
       region: "",
-      category: "",
-      workingDays: [],
+      categoryId: "",
+      working_days: [],
       experience: "",
       terms: false,
     },
@@ -52,21 +60,21 @@ export default function JoinProvider() {
           if (!value) return false;
           return ["image/jpeg", "image/jpg", "image/png"].includes(value.type);
         }),
-      frontId: Yup.mixed()
+      front_id: Yup.mixed()
         .required("Required")
         .test("fileFormat", "Unsupported file format", (value) => {
           if (!value) return false;
           return ["image/jpeg", "image/jpg", "image/png"].includes(value.type);
         }),
-      backId: Yup.mixed()
+      back_id: Yup.mixed()
         .required("Required")
         .test("fileFormat", "Unsupported file format", (value) => {
           if (!value) return false;
           return ["image/jpeg", "image/jpg", "image/png"].includes(value.type);
         }),
       region: Yup.string().required("Required"),
-      category: Yup.string().required("Required"),
-      workingDays: Yup.array()
+      categoryId: Yup.string().required("Required"),
+        working_days: Yup.array()
         .min(1, "Select at least one working day")
         .required("Required"),
       experience: Yup.number()
@@ -77,9 +85,7 @@ export default function JoinProvider() {
         "You must accept the terms and conditions"
       ),
     }),
-    onSubmit: (values) => {
-      console.log("Form Values:", values);
-    },
+    onSubmit: submitForm,
   });
 
   const handleImagePreview = (e, setPreview) => {
@@ -344,18 +350,18 @@ export default function JoinProvider() {
                     )}
                     <div className="flex text-sm text-gray-600">
                       <label
-                        htmlFor="frontId"
+                        htmlFor="front_id"
                         className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500"
                       >
                         <span>Upload front side</span>
                         <input
-                          id="frontId"
+                            id="front_id"
                           type="file"
                           accept=".jpg,.jpeg,.png"
                           className="sr-only"
                           onChange={(e) => {
                             formik.setFieldValue(
-                              "frontId",
+                              "front_id",
                               e.currentTarget.files[0]
                             );
                             handleImagePreview(e, setFrontIdPreview);
@@ -365,9 +371,9 @@ export default function JoinProvider() {
                     </div>
                   </div>
                 </div>
-                {formik.touched.frontId && formik.errors.frontId && (
+                {formik.touched.front_id && formik.errors.front_id && (
                   <div className="text-red-600 text-sm">
-                    {formik.errors.frontId}
+                    {formik.errors.front_id}
                   </div>
                 )}
               </div>
@@ -390,18 +396,18 @@ export default function JoinProvider() {
                     )}
                     <div className="flex text-sm text-gray-600">
                       <label
-                        htmlFor="backId"
+                          htmlFor="back_id"
                         className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500"
                       >
                         <span>Upload back side</span>
                         <input
-                          id="backId"
+                          id="back_id"
                           type="file"
                           accept=".jpg,.jpeg,.png"
                           className="sr-only"
                           onChange={(e) => {
                             formik.setFieldValue(
-                              "backId",
+                              "back_id",
                               e.currentTarget.files[0]
                             );
                             handleImagePreview(e, setBackIdPreview);
@@ -411,9 +417,9 @@ export default function JoinProvider() {
                     </div>
                   </div>
                 </div>
-                {formik.touched.backId && formik.errors.backId && (
+                {formik.touched.back_id && formik.errors.back_id && (
                   <div className="text-red-600 text-sm">
-                    {formik.errors.backId}
+                    {formik.errors.back_id}
                   </div>
                 )}
               </div>
@@ -464,7 +470,7 @@ export default function JoinProvider() {
               {/* Category Select */}
               <div>
                 <label
-                  htmlFor="category"
+                  htmlFor="categoryId"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Working Category المهنة
@@ -472,8 +478,8 @@ export default function JoinProvider() {
                 <div className="relative">
                   <i className="fas fa-tools absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                   <select
-                    id="category"
-                    {...formik.getFieldProps("category")}
+                    id="categoryId"
+                    {...formik.getFieldProps("categoryId")}
                     className="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   >
                     <option value="" disabled selected hidden>
@@ -486,9 +492,9 @@ export default function JoinProvider() {
                     ))}
                   </select>
                 </div>
-                {formik.touched.category && formik.errors.category && (
+                {formik.touched.categoryId && formik.errors.categoryId && (
                   <div className="text-red-600 text-sm mt-1">
-                    {formik.errors.category}
+                    {formik.errors.categoryId}
                   </div>
                 )}
               </div>
@@ -538,33 +544,33 @@ export default function JoinProvider() {
                   <div
                     key={day}
                     className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                      formik.values.workingDays.includes(day)
+                      formik.values.working_days.includes(day)
                         ? "bg-blue-50 border-blue-500 text-blue-700"
                         : "border-gray-300 hover:border-blue-400"
                     }`}
                     onClick={() => {
-                      const days = [...formik.values.workingDays];
+                      const days = [...formik.values.working_days];
                       const index = days.indexOf(day);
                       if (index > -1) {
                         days.splice(index, 1);
                       } else {
                         days.push(day);
                       }
-                      formik.setFieldValue("workingDays", days);
+                      formik.setFieldValue("working_days", days);
                     }}
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">{day}</span>
-                      {formik.values.workingDays.includes(day) && (
+                      {formik.values.working_days.includes(day) && (
                         <i className="fas fa-check text-blue-500"></i>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
-              {formik.touched.workingDays && formik.errors.workingDays && (
+              {formik.touched.working_days && formik.errors.working_days && (
                 <div className="text-red-600 text-sm mt-2">
-                  {formik.errors.workingDays}
+                  {formik.errors.working_days}
                 </div>
               )}
             </div>
@@ -624,7 +630,7 @@ export default function JoinProvider() {
                 </p>
                 <p className="text-sm text-blue-700">
                   <span className="font-medium">Category:</span>{" "}
-                  {formik.values.category}
+                  {formik.values.categoryId}
                 </p>
                 <p className="text-sm text-blue-700">
                   <span className="font-medium">Region:</span>{" "}
@@ -632,7 +638,7 @@ export default function JoinProvider() {
                 </p>
                 <p className="text-sm text-blue-700">
                   <span className="font-medium">Working Days:</span>{" "}
-                  {formik.values.workingDays.join(", ")}
+                  {formik.values.working_days.join(", ")}
                 </p>
               </div>
             </div>
