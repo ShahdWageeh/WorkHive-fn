@@ -4,23 +4,28 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Checkout() {
   const { idS, idP, price } = useParams();
   const [availableTimes, setAvailableTimes] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("cash"); // Default to cash
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const { decoded, token } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // Get today's date in YYYY-MM-DD format for date input min attribute
+  const today = new Date().toISOString().split('T')[0];
+
   useEffect(() => {
     const fetchAvailableTimes = async () => {
       try {
         const res = await axios.get(
           `https://work-hive-project.vercel.app/api/v1/available_time/${idP}`
         );
-
         setAvailableTimes(res.data.data);
       } catch (error) {
         console.error("Error fetching times:", error);
+        toast.error("Failed to fetch available times");
       }
     };
 
@@ -37,45 +42,68 @@ export default function Checkout() {
       region: "",
       booking_date: "",
       booking_time: "",
-      paymentMethod: "",
+      paymentMethod: "cash", // Set default payment method
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Required"),
+      name: Yup.string()
+        .min(3, "Name must be at least 3 characters")
+        .required("Name is required"),
       phone: Yup.string()
-        .matches(/^01[0-9]{9}$/, "Invalid phone")
-        .required("Required"),
-      address: Yup.string().required("Required"),
-      region: Yup.string().required("Required"),
-      booking_date: Yup.string().required("Required"),
-      booking_time: Yup.string().required("Required"),
-      paymentMethod: Yup.string().required("Required"),
+        .matches(/^01[0-9]{9}$/, "Invalid Egyptian phone number")
+        .required("Phone number is required"),
+      address: Yup.string()
+        .min(5, "Address must be at least 5 characters")
+        .required("Address is required"),
+      region: Yup.string()
+        .required("Region is required"),
+      booking_date: Yup.date()
+        .min(today, "Cannot book for past dates")
+        .required("Booking date is required"),
+      booking_time: Yup.string()
+        .required("Booking time is required"),
+      paymentMethod: Yup.string()
+        .required("Payment method is required"),
     }),
-    onSubmit: async (values, { resetForm }) => {
-      const payload = {
-        customerId: decoded.id,
-        providerId: +idP,
-        serviceId: +idS,
-        paymentMethod, // Include payment method in payload
-        ...values,
-      };
-      console.log(payload);
-
+    onSubmit: async (values) => {
       try {
+        // Format the booking_time to remove seconds
+        const formattedTime = values.booking_time.split(':').slice(0, 2).join(':');
+
+        const payload = {
+          customerId: decoded.id,
+          providerId: +idP,
+          serviceId: +idS,
+          ...values,
+          booking_time: formattedTime, // Use the formatted time
+          paymentMethod,
+        };
+
         const res = await axios.post(
           "https://work-hive-project.vercel.app/api/v1/bookings",
           payload,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { 
+            headers: { 
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            } 
+          }
         );
+
+        toast.success("Booking successful!");
         console.log(res);
-        navigate("/userProfile");
-        alert("Booking sent!");
-        resetForm();
+        
       } catch (err) {
-        alert("Failed to book. Try again.");
-        console.error(err);
+        console.error("Booking error:", err);
+        toast.error(err.response?.data?.message || "Failed to book. Please try again.");
       }
     },
   });
+
+  // Update formik when payment method changes
+  useEffect(() => {
+    formik.setFieldValue('paymentMethod', paymentMethod);
+  }, [paymentMethod]);
+
   return (
     <>
       <section className="pt-32 py-10">
@@ -182,6 +210,7 @@ export default function Checkout() {
               <input
                 type="date"
                 name="booking_date"
+                min={today}
                 className="form-input w-full focus:ring-blue-500 focus:border-blue-500 rounded-md border-gray-300"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -211,8 +240,11 @@ export default function Checkout() {
                   Select a time
                 </option>
                 {availableTimes?.map((time, index) => (
-                  <option key={index} value={time.start_time}>
-                    {time.start_time}
+                  <option 
+                    key={index} 
+                    value={time.start_time.split(':').slice(0, 2).join(':')}
+                  >
+                    {time.start_time.split(':').slice(0, 2).join(':')}
                   </option>
                 ))}
               </select>
