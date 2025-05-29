@@ -51,6 +51,8 @@ export default function UserProfile() {
       getBookings();
       if (data.status === "fail") {
         toast.error(data.message);
+      }else{
+        toast.success('Booking canceled successfully')
       }
     } catch (error) {
       console.log(error);

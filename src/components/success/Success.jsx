@@ -136,7 +136,7 @@ export default function Success() {
                     {isLoading ? "Verifying Payment..." : status ? "Payment Successful!" : "Payment Failed!"}
                 </h1>
                 <p className="text-gray-600">
-                    {isLoading ? "Please wait..." : status ? "Redirecting to home page..." : "Please try again!"}
+                    {isLoading ? "Please wait..." : status ? "Redirecting to Dashboard..." : "Please try again!"}
                 </p>
             </div>
 

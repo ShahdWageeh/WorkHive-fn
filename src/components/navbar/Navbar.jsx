@@ -49,10 +49,10 @@ export default function Navbar() {
                 >
                   <div className="px-4 py-3">
                     <span className="block text-sm text-gray-900 dark:text-white">
-                      {decoded.fullname}
+                      {decoded?.fullname}
                     </span>
                     <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
-                      {decoded.email}
+                      {decoded?.email}
                     </span>
                   </div>
                   <ul className="py-2" aria-labelledby="user-menu-button">

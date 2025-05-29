@@ -34,7 +34,7 @@ export default function Register() {
       navigate("/login");
       console.log(res);
     } catch (err) {
-      setErrorMsg(err.message);
+      setErrorMsg(err.response.data.errors[0].msg);
       console.log(err);
     } finally {
       setLoading(false);
@@ -314,7 +314,7 @@ export default function Register() {
                 </button>
               </form>
               {errorMsg ? (
-                <div className="text-red-600 text-center text-2xl">
+                <div className="text-red-800 rounded-md py-2 text-center text-2xl mt-4 bg-red-100">
                   {errorMsg}
                 </div>
               ) : null}

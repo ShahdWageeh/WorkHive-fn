@@ -169,7 +169,7 @@ export default function UpdatePass() {
                   </button>
                 </form>
                 {errorMsg ? (
-                  <div className="text-red-600 text-center text-2xl">
+                  <div className="text-red-800 py-2 mt-4 bg-red-100 rounded-md text-center text-2xl">
                     {errorMsg}
                   </div>
                 ) : null}

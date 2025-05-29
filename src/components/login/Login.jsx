@@ -129,7 +129,7 @@ export default function Login() {
                   </button>
                 </form>
                 {errorMsg ? (
-                  <div className="text-red-600 text-center text-2xl">
+                  <div className="text-red-800 rounded-md py-2 text-center text-2xl mt-4 bg-red-100">
                     {errorMsg}
                   </div>
                 ) : null}
