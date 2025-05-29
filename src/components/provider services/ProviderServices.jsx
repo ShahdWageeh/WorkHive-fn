@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import serviceImg from "../../assets/images/services.jpg";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function ProviderServices({ ids }) {
   const [services, setServices] = useState();
+  const {token} = useContext(AuthContext);
   async function getServices() {
     try {
       const res = await axios.get(
@@ -47,7 +49,7 @@ export default function ProviderServices({ ids }) {
                     </div>
                     <div className="p-6 pt-0">
                       <Link
-                        to={`/checkout/${ser.id}/${ids.idP}/${ser.price}`}
+                        to={token ? `/checkout/${ser.id}/${ids.idP}/${ser.price}` : '/login'}
                         data-ripple-light="true"
                         type="button"
                         className="select-none rounded-lg bg-blue-800 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:bg-blue-700 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"

@@ -20,6 +20,7 @@ import UpdateData from "./components/updateData/UpdateData";
 import UpdatePass from "./components/updatePass/UpdatePass";
 import JoinProvider from "./components/joinProvider/JoinProvider";
 import About from "./components/about/About";
+import Success from "./components/success/Success";
 const routes = createBrowserRouter([
   {path:'', element: <Layout/>, children:[
     {path:'', element: <Home/>},
@@ -38,6 +39,7 @@ const routes = createBrowserRouter([
     {path:'providerProfile/:idC/:idP', element: <ProviderProfile/>},
     {path:'joinProvider', element: <JoinProvider/>},
     {path:'about', element: <About/>},
+    {path:'success', element: <Success/>},
   ]}
 ])
 function App() {

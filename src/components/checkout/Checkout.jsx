@@ -3,7 +3,7 @@ import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export default function Checkout() {
@@ -12,9 +12,10 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const { decoded, token } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Get today's date in YYYY-MM-DD format for date input min attribute
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     const fetchAvailableTimes = async () => {
@@ -54,18 +55,16 @@ export default function Checkout() {
       address: Yup.string()
         .min(5, "Address must be at least 5 characters")
         .required("Address is required"),
-      region: Yup.string()
-        .required("Region is required"),
+      region: Yup.string().required("Region is required"),
       booking_date: Yup.date()
         .min(today, "Cannot book for past dates")
         .required("Booking date is required"),
-      booking_time: Yup.string()
-        .required("Booking time is required"),
-      paymentMethod: Yup.string()
-        .required("Payment method is required"),
+      booking_time: Yup.string().required("Booking time is required"),
+      paymentMethod: Yup.string().required("Payment method is required"),
     }),
     onSubmit: async (values) => {
       try {
+        console.log(paymentMethod , 'paymentMethod')
         // Format the booking_time to remove seconds
         const formattedTime = values.booking_time.split(':').slice(0, 2).join(':');
 
@@ -77,7 +76,9 @@ export default function Checkout() {
           booking_time: formattedTime, // Use the formatted time
           paymentMethod,
         };
-
+        if(paymentMethod === 'visa') {
+          handleVisaPayment(payload);
+        }else{
         const res = await axios.post(
           "https://work-hive-project.vercel.app/api/v1/bookings",
           payload,
@@ -91,17 +92,50 @@ export default function Checkout() {
 
         toast.success("Booking successful!");
         console.log(res);
-        
+      }
       } catch (err) {
         console.error("Booking error:", err);
-        toast.error(err.response?.data?.message || "Failed to book. Please try again.");
+        toast.error(err.response?.data?.message || "Failed to book. Please Login First");
+        
       }
     },
   });
+  async function handleVisaPayment(payload) {
+    console.log('visa');
+    const {name,phone,address,region,booking_date,booking_time} = payload
+    const payloadForVisa = {
+     providerId : +idP,
+     name,
+     phone,
+     address,
+     region,
+     booking_date,
+     booking_time
+    }
+   
+    const res = await axios.post(
+     `https://work-hive-project.vercel.app/api/v1/payments/create-checkout-session/${idS}?successUrl=http://${window.location.host}/success`,
+     payloadForVisa,
+     {
+       headers: { 
+         Authorization: `Bearer ${token}`,
+         'Content-Type': 'application/json'
+       }
+     }
+    );
+    console.log(res , 'res for visa');
+    if(res.status === 200) {
+     localStorage.setItem("stripe_session_id", res.data.sessionId);
+     setTimeout(() => {
+       toast.success("Redirecting to payment page...");
+       window.open(res.data.url, "_blank");
+     }, 1000);
+    }
+   }
 
   // Update formik when payment method changes
   useEffect(() => {
-    formik.setFieldValue('paymentMethod', paymentMethod);
+    formik.setFieldValue("paymentMethod", paymentMethod);
   }, [paymentMethod]);
 
   return (
@@ -240,11 +274,11 @@ export default function Checkout() {
                   Select a time
                 </option>
                 {availableTimes?.map((time, index) => (
-                  <option 
-                    key={index} 
-                    value={time.start_time.split(':').slice(0, 2).join(':')}
+                  <option
+                    key={index}
+                    value={time.start_time.split(":").slice(0, 2).join(":")}
                   >
-                    {time.start_time.split(':').slice(0, 2).join(':')}
+                    {time.start_time.split(":").slice(0, 2).join(":")}
                   </option>
                 ))}
               </select>
@@ -261,11 +295,11 @@ export default function Checkout() {
                 Payment Method
               </label>
               <div className="grid grid-cols-3 gap-4">
-                <div 
+                <div
                   className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
                     paymentMethod === "cash"
-                    ? "border-blue-800 bg-blue-50 shadow-sm"
-                    : "border-gray-200 hover:border-blue-400"
+                      ? "border-blue-800 bg-blue-50 shadow-sm"
+                      : "border-gray-200 hover:border-blue-400"
                   }`}
                   onClick={() => setPaymentMethod("cash")}
                 >
@@ -292,11 +326,11 @@ export default function Checkout() {
                   )}
                 </div>
 
-                <div 
+                <div
                   className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
                     paymentMethod === "visa"
-                    ? "border-blue-800 bg-blue-50 shadow-sm"
-                    : "border-gray-200 hover:border-blue-400"
+                      ? "border-blue-800 bg-blue-50 shadow-sm"
+                      : "border-gray-200 hover:border-blue-400"
                   }`}
                   onClick={() => setPaymentMethod("visa")}
                 >
@@ -323,11 +357,11 @@ export default function Checkout() {
                   )}
                 </div>
 
-                <div 
+                <div
                   className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
                     paymentMethod === "wallet"
-                    ? "border-blue-800 bg-blue-50 shadow-sm"
-                    : "border-gray-200 hover:border-blue-400"
+                      ? "border-blue-800 bg-blue-50 shadow-sm"
+                      : "border-gray-200 hover:border-blue-400"
                   }`}
                   onClick={() => setPaymentMethod("wallet")}
                 >
@@ -360,15 +394,19 @@ export default function Checkout() {
                 <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center space-x-2 mb-2">
                     <i className="fas fa-info-circle text-blue-600"></i>
-                    <p className="font-medium text-blue-800">Wallet Payment Details:</p>
+                    <p className="font-medium text-blue-800">
+                      Wallet Payment Details:
+                    </p>
                   </div>
                   <p className="text-blue-700 font-medium mb-2">
-                    Payment Number: <span className="text-blue-900">01067943731</span>
+                    Payment Number:{" "}
+                    <span className="text-blue-900">01067943731</span>
                   </p>
                   <div className="flex items-start space-x-2 text-orange-600">
                     <i className="fas fa-exclamation-triangle mt-1"></i>
                     <p className="text-sm">
-                      Note: If the payment is not made within an hour from completing the booking, it will be automatically canceled.
+                      Note: If the payment is not made within an hour from
+                      completing the booking, it will be automatically canceled.
                     </p>
                   </div>
                 </div>

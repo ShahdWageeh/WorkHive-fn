@@ -33,21 +33,6 @@ export default function UserProfile() {
     }
   }
   async function cancelBooking(id) {
-    // try {
-    //   const res = await axios.patch(`https://work-hive-project.vercel.app/api/v1/bookings/cancel/${id}`, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   });
-    //   console.log(res);
-    // } catch (err) {
-    //   console.log(err);
-    //   if(err.response.data.status === 'fail'){
-    //     alert(err.response.data.message);
-    //     console.log(id);
-        
-    //   }
-    // }
     console.log(id, token, "id, token");
     try {
       const res = await fetch(`https://work-hive-project.vercel.app/api/v1/bookings/cancel/${id}`, {  
@@ -58,6 +43,7 @@ export default function UserProfile() {
       });
       const data = await res.json();
       console.log(data);
+      getBookings();
       if(data.status === 'fail'){
         toast.error(data.message)
       }
