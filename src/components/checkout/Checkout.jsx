@@ -92,6 +92,7 @@ export default function Checkout() {
 
         toast.success("Booking successful!");
         console.log(res);
+        navigate(`/userProfile`);
       }
       } catch (err) {
         console.error("Booking error:", err);
