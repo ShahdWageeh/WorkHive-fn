@@ -272,7 +272,7 @@ export default function Home() {
           </SlideIn>
           {/* questions */}
           <SlideIn direction="left">
-            <section className="py-16">
+            <section className="py-16" id="faqs">
               <div className="container">
                 <p className="text-center text-blue-950 font-semibold text-xl">
                   FAQS

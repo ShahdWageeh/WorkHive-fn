@@ -107,9 +107,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400">
-                  Cookie Policy
-                </a>
+                <Link to={'/#faqs'} className="hover:text-blue-400">
+                  FAQs
+                </Link>
               </li>
             </ul>
           </div>
