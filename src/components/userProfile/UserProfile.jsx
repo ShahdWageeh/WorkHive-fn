@@ -2,12 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Modal from "../modal/Modal";
 
 export default function UserProfile() {
   const { token } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Function to convert 24-hour time to 12-hour format
   const convertTo12Hour = (time24) => {
@@ -51,8 +53,8 @@ export default function UserProfile() {
       getBookings();
       if (data.status === "fail") {
         toast.error(data.message);
-      }else{
-        toast.success('Booking canceled successfully')
+      } else {
+        toast.success("Booking canceled successfully");
       }
     } catch (error) {
       console.log(error);
@@ -89,8 +91,12 @@ export default function UserProfile() {
           {showConfirmPopup && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-                <h3 className="text-lg font-semibold mb-4">Confirm Cancellation</h3>
-                <p className="text-gray-600 mb-6">Are you sure you want to cancel this booking?</p>
+                <h3 className="text-lg font-semibold mb-4">
+                  Confirm Cancellation
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Are you sure you want to cancel this booking?
+                </p>
                 <div className="flex justify-end space-x-4">
                   <button
                     onClick={handleCancelPopup}
@@ -108,6 +114,13 @@ export default function UserProfile() {
               </div>
             </div>
           )}
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <div className="">
+              <h2>Add Feedback</h2>
+              <input type="text" placeholder="Feedback" />
+              <button>Submit</button>
+            </div>
+          </Modal>
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -191,7 +204,10 @@ export default function UserProfile() {
                           >
                             Cancel
                           </button>
-                          <button className="text-blue-600 hover:text-blue-900 font-medium text-sm">
+                          <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="text-blue-600 hover:text-blue-900 font-medium text-sm"
+                          >
                             Add Feedback
                           </button>
                         </div>
