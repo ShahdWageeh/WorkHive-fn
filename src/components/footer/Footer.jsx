@@ -97,9 +97,9 @@ export default function Footer() {
             </span>
             <ul className="flex flex-wrap items-center mt-4 sm:mt-0 text-sm font-medium text-gray-300">
               <li>
-                <a href="#" className="hover:text-blue-400 me-4 md:me-6">
-                  Privacy Policy
-                </a>
+                <Link to={'/joinProvider'} className="hover:text-blue-400 me-4 md:me-6">
+                  Join as Provider
+                </Link>
               </li>
               <li>
                 <a href="#" className="hover:text-blue-400 me-4 md:me-6">

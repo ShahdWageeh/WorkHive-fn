@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Blocks } from "react-loader-spinner";
 import SlideIn from "../animation/SlideIn";
 import useCategories from "../../Hooks/useCategories";
@@ -7,8 +7,9 @@ import HomeReviews from "../homeReviews/HomeReviews";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import imgg from "../../assets/images/elecAcc.jpg";
-
+import { AuthContext } from "../context/AuthContext";
 export default function Home() {
+  const { token } = useContext(AuthContext);
   const { getCategories, catData, loading } = useCategories();
   const [hovered, setHovered] = useState(null);
   const [activeAccordion, setActiveAccordion] = useState(null);
@@ -82,7 +83,7 @@ export default function Home() {
                         for you.
                       </span>{" "}
                     </h1>
-                    <p className="my-5 text-slate-700 text-xl">
+                    <p id="home-description" className="my-5 text-slate-700 text-xl">
                       Welcome to our platform — your trusted destination for
                       booking services like repairs, and more. We connect you
                       with verified professionals, offer secure payments, and
@@ -91,19 +92,21 @@ export default function Home() {
                       reliability — all in one place, just for you.
                     </p>
                     <Link
-                      to={'about'}
+                      to={"about"}
                       type="button"
                       className="text-white bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                     >
                       Learn More
                     </Link>
-                    <Link
-                      to="/joinProvider"
-                      type="button"
-                      className="text-white bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                    >
-                      Join as Provider
-                    </Link>
+                    {token ? null : (
+                      <Link
+                        to="/joinProvider"
+                        type="button"
+                        className="text-white bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                      >
+                        Join as Provider
+                      </Link>
+                    )}
                   </div>
                   <div className="col-span-1">
                     {/* Original hover effect for screens >= 650px */}
@@ -112,8 +115,9 @@ export default function Home() {
                         const isHovered = hovered === index;
                         const isAnyHovered = hovered !== null;
                         return (
-                          <div
+                          <Link
                             key={index}
+                            to={`/serviceProviders/${item.id}`}
                             className={`relative group transition-all rounded-md duration-500 ease-in-out overflow-hidden ${
                               isAnyHovered
                                 ? isHovered
@@ -140,7 +144,7 @@ export default function Home() {
                                 {item.name}
                               </h2>
                             </div>
-                          </div>
+                          </Link>
                         );
                       })}
                     </div>
@@ -314,7 +318,7 @@ export default function Home() {
                       >
                         <div className="p-5 border border-t-0 border-gray-200 bg-white">
                           <p className="text-gray-600">{faq.answer}</p>
-                  </div>
+                        </div>
                       </div>
                     </div>
                   ))}
