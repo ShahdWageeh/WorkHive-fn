@@ -3,6 +3,7 @@ import { AuthContext } from "./../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import FeedbackModal from "../feedbackModal/FeedbackModal";
+import EditReviewModal from "../editReviewModal/EditReviewModal";
 
 export default function UserProfile() {
   const { token } = useContext(AuthContext);
@@ -13,7 +14,9 @@ export default function UserProfile() {
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [selectedReviewId, setSelectedReviewId] = useState(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showEditReviewModal, setShowEditReviewModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedReview, setSelectedReview] = useState(null);
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'reviews'
 
   // Function to convert 24-hour time to 12-hour format
@@ -144,6 +147,11 @@ export default function UserProfile() {
     setSelectedReviewId(null);
   };
 
+  const handleEditReviewClick = (review) => {
+    setSelectedReview(review);
+    setShowEditReviewModal(true);
+  };
+
   const toggleTab = () => {
     setActiveTab(activeTab === 'bookings' ? 'reviews' : 'bookings');
   };
@@ -220,7 +228,7 @@ export default function UserProfile() {
             </div>
           )}
 
-          {/* Feedback Modal */}
+          {/* Feedback Modal for new reviews */}
           <FeedbackModal
             isOpen={showFeedbackModal}
             onClose={() => {
@@ -229,6 +237,18 @@ export default function UserProfile() {
             }}
             bookingId={selectedBooking?.id}
             providerId={selectedBooking?.serviceProvider?.id}
+            token={token}
+          />
+
+          {/* Edit Review Modal */}
+          <EditReviewModal
+            isOpen={showEditReviewModal}
+            onClose={() => {
+              setShowEditReviewModal(false);
+              setSelectedReview(null);
+              getReviews(); // Refresh reviews after editing
+            }}
+            review={selectedReview}
             token={token}
           />
 
@@ -355,7 +375,7 @@ export default function UserProfile() {
                       <td className="px-6 py-4">
                         <div className="flex space-x-2 gap-4">
                           <button
-                            onClick={() => handleFeedbackClick(review)}
+                            onClick={() => handleEditReviewClick(review)}
                             className="text-blue-600 hover:text-blue-900 font-medium text-sm"
                           >
                             Edit
