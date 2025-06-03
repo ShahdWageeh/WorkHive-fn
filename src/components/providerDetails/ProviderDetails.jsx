@@ -3,7 +3,7 @@ import aboutImg from "../../assets/images/about.jpg";
 import avatarImg from "../../assets/images/avatar.svg";
 
 export default function ProviderDetails({ pro, rev }) {
-  let rating = Math.round(pro?.data.rating);
+  let rating = Math.round(parseFloat(pro?.data.rating) || 0);
   console.log(rev);
 
   return (
@@ -38,23 +38,18 @@ export default function ProviderDetails({ pro, rev }) {
                     {pro?.data.experience_years}
                   </p>
                   <p className="flex items-center gap-1">
-                    {Array.from({ length: rating }, (_, index) => {
-                      return (
-                        <>
-                          <svg
-                            key={index}
-                            className="w-4 h-4 text-yellow-300"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 22 20"
-                          >
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                          </svg>
-                        </>
-                      );
-                    })}
-
+                    {Array.from({ length: rating }, (_, index) => (
+                      <svg
+                        key={index}
+                        className="w-4 h-4 text-yellow-300"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 22 20"
+                      >
+                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                      </svg>
+                    ))}
                     <span className="font-medium">{pro?.data.rating}</span>
                   </p>
                 </div>
@@ -64,57 +59,45 @@ export default function ProviderDetails({ pro, rev }) {
               <h1 className="text-3xl mb-4 font-semibold text-blue-800">
                 Reviews
               </h1>
-              {rev?.data.map((reviw) => {
-                return (
-                  <>
-                    <div className="flex items-center gap-3 my-5">
-                      <img
-                        src={avatarImg}
-                        className="w-14 h-14 rounded-full"
-                        alt=""
-                      />
-                      <div>
-                        <div className="flex gap-3">
-                          <h3 className="font-semibold">{reviw.customer.fullname}</h3>
-                          <p className="flex items-center">
-                            <svg
-                              className="w-4 h-4 text-yellow-300"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 22 20"
-                            >
-                              <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                            </svg>
-                            <svg
-                              className="w-4 h-4 text-yellow-300"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 22 20"
-                            >
-                              <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                            </svg>
-                            <svg
-                              className="w-4 h-4 text-yellow-300"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 22 20"
-                            >
-                              <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                            </svg>
-                            <span className="ml-2">{reviw.rating}</span>
+              <div style={{ maxHeight: '250px', overflowY: 'auto' }}>
+                {rev?.data.map((reviw) => {
+                  const reviewRating = Math.round(parseFloat(reviw.rating) || 0);
+                  return (
+                    <>
+                      <div className="flex items-center gap-3 my-5">
+                        <img
+                          src={avatarImg}
+                          className="w-14 h-14 rounded-full"
+                          alt=""
+                        />
+                        <div>
+                          <div className="flex gap-3">
+                            <h3 className="font-semibold">{reviw.customer.fullname}</h3>
+                            <p className="flex items-center">
+                              {Array.from({ length: reviewRating }, (_, index) => (
+                                <svg
+                                  key={index}
+                                  className="w-4 h-4 text-yellow-300"
+                                  aria-hidden="true"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="currentColor"
+                                  viewBox="0 0 22 20"
+                                >
+                                  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                </svg>
+                              ))}
+                              <span className="ml-2">{reviw.rating}</span>
+                            </p>
+                          </div>
+                          <p>
+                            {reviw.comment}
                           </p>
                         </div>
-                        <p>
-                          {reviw.comment}
-                        </p>
                       </div>
-                    </div>
-                  </>
-                );
-              })}
+                    </>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

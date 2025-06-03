@@ -2,14 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Modal from "../modal/Modal";
+import FeedbackModal from "../feedbackModal/FeedbackModal";
 
 export default function UserProfile() {
   const { token } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   // Function to convert 24-hour time to 12-hour format
   const convertTo12Hour = (time24) => {
@@ -82,6 +83,11 @@ export default function UserProfile() {
     setSelectedBookingId(null);
   };
 
+  const handleFeedbackClick = (booking) => {
+    setSelectedBooking(booking);
+    setShowFeedbackModal(true);
+  };
+
   return (
     <>
       <section className="py-32">
@@ -114,13 +120,19 @@ export default function UserProfile() {
               </div>
             </div>
           )}
-          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <div className="">
-              <h2>Add Feedback</h2>
-              <input type="text" placeholder="Feedback" />
-              <button>Submit</button>
-            </div>
-          </Modal>
+
+          {/* Feedback Modal */}
+          <FeedbackModal
+            isOpen={showFeedbackModal}
+            onClose={() => {
+              setShowFeedbackModal(false);
+              setSelectedBooking(null);
+            }}
+            bookingId={selectedBooking?.id}
+            providerId={selectedBooking?.serviceProvider?.id}
+            token={token}
+          />
+
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -205,8 +217,13 @@ export default function UserProfile() {
                             Cancel
                           </button>
                           <button
-                            onClick={() => setIsModalOpen(true)}
-                            className="text-blue-600 hover:text-blue-900 font-medium text-sm"
+                            onClick={() => handleFeedbackClick(book)}
+                            disabled={!book.status}
+                            className={`text-sm font-medium ${
+                              !book.status
+                                ? "text-gray-400 cursor-not-allowed"
+                                : "text-blue-600 hover:text-blue-900"
+                            }`}
                           >
                             Add Feedback
                           </button>
