@@ -24,9 +24,10 @@ export default function Navbar() {
             <img src={logo} className="w-[180px]" alt="Flowbite Logo" />
           </Link>
           {/* right side */}
-          <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+          <div className="flex gap-5 items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
             {token ? (
               <>
+                <i className="fa-solid fa-bell text-2xl text-blue-800 cursor-pointer" />
                 <button
                   type="button"
                   className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"

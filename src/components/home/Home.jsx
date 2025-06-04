@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Blocks } from "react-loader-spinner";
 import SlideIn from "../animation/SlideIn";
+import FadeInText from "../animation/FadeInText";
 import useCategories from "../../Hooks/useCategories";
 import { Link } from "react-router-dom";
 import HomeReviews from "../homeReviews/HomeReviews";
@@ -16,19 +17,19 @@ const categoryDescriptions = {
   Electricity:
     "WorkHive connects you with certified electricians for safe and efficient electrical work. From installations to repairs, we handle lighting, sockets, circuit breakers, and full rewiring. We ensure compliance with safety standards, offering timely services for homes, offices, and renovations to keep your property powered and secure.",
   Plumbing:
-    "Our plumbing professionals fix leaks, install pipes, unclog drains, and manage full bathroom and kitchen setups. Whether it’s emergency repairs or planned installations, WorkHive guarantees clean, reliable, and long-lasting solutions. Get fast, expert plumbing help tailored to your home’s needs with just a few clicks.",
+    "Our plumbing professionals fix leaks, install pipes, unclog drains, and manage full bathroom and kitchen setups. Whether it's emergency repairs or planned installations, WorkHive guarantees clean, reliable, and long-lasting solutions. Get fast, expert plumbing help tailored to your home's needs with just a few clicks.",
   Appliances:
     "Need appliance repairs or installation? WorkHive connects you with technicians for refrigerators, washing machines, ovens, and more. We troubleshoot and fix issues quickly, ensuring your devices run safely and efficiently. Count on us for dependable, in-home appliance services at your convenience.",
   Carpentry:
-    "Hire skilled carpenters for custom furniture, wood repairs, and installations. WorkHive offers expert craftsmanship for doors, windows, closets, and decorative woodwork. We turn your ideas into reality with precision and quality finishes, whether it’s a new build, renovation, or creative project.",
+    "Hire skilled carpenters for custom furniture, wood repairs, and installations. WorkHive offers expert craftsmanship for doors, windows, closets, and decorative woodwork. We turn your ideas into reality with precision and quality finishes, whether it's a new build, renovation, or creative project.",
   Painting:
     "Refresh your space with professional painters from WorkHive. We handle interior and exterior painting, texture finishes, and wall treatments. Our team ensures clean, even coats, color consultation, and durable results using top-quality materials, delivering a beautiful, renewed environment that reflects your style.",
   Alumetal:
-    "For stylish, durable aluminum and metalwork, WorkHive offers expert fabrication and installation. Services include kitchen cabinets, doors, windows, and partitions. We focus on modern designs, lasting materials, and smooth finishes to improve your home’s aesthetics and performance with professional metal solutions.",
+    "For stylish, durable aluminum and metalwork, WorkHive offers expert fabrication and installation. Services include kitchen cabinets, doors, windows, and partitions. We focus on modern designs, lasting materials, and smooth finishes to improve your home's aesthetics and performance with professional metal solutions.",
   Tiling:
-    "Get flawless tile work for walls, floors, kitchens, and bathrooms. WorkHive’s tilers specialize in ceramic, porcelain, marble, and mosaic applications. We guarantee smooth alignment, strong adhesion, and clean finishes to enhance the beauty and functionality of your space with professional precision.",
+    "Get flawless tile work for walls, floors, kitchens, and bathrooms. WorkHive's tilers specialize in ceramic, porcelain, marble, and mosaic applications. We guarantee smooth alignment, strong adhesion, and clean finishes to enhance the beauty and functionality of your space with professional precision.",
   "A/C":
-    "WorkHive offers expert air conditioning installation, repair, and maintenance services. Whether it’s split systems or central units, our professionals ensure optimal cooling and energy efficiency. We handle cleaning, gas refills, and performance tuning to keep your space comfortable year-round with minimal hassle.",
+    "WorkHive offers expert air conditioning installation, repair, and maintenance services. Whether it's split systems or central units, our professionals ensure optimal cooling and energy efficiency. We handle cleaning, gas refills, and performance tuning to keep your space comfortable year-round with minimal hassle.",
 };
 
 export default function Home() {
@@ -44,14 +45,6 @@ export default function Home() {
     getCategories();
   }, []);
 
-  useEffect(() => {
-    if (catData?.data) {
-      console.log(
-        "Available categories:",
-        catData.data.map((cat) => cat.name)
-      );
-    }
-  }, [catData]);
 
   const faqData = [
     {
@@ -91,11 +84,9 @@ export default function Home() {
   };
 
   const handleCategoryHover = (category) => {
-    console.log("Hovering over category:", category.name);
     setHovered(category.index);
     // Get the base category name (first word) to match our descriptions object
     const baseCategoryName = category.name.split(" ")[0];
-    console.log("Looking up description for:", baseCategoryName);
     setCurrentDescription(
       categoryDescriptions[baseCategoryName] || categoryDescriptions.default
     );
@@ -134,12 +125,9 @@ export default function Home() {
                         for you.
                       </span>{" "}
                     </h1>
-                    <p
-                      id="home-description"
-                      className="my-5 text-slate-700 text-xl transition-all duration-300"
-                    >
+                    <FadeInText className="my-5 text-slate-700 text-xl">
                       {currentDescription}
-                    </p>
+                    </FadeInText>
                     <Link
                       to={"about"}
                       type="button"
@@ -159,7 +147,7 @@ export default function Home() {
                   </div>
                   <div className="col-span-1">
                     {/* Original hover effect for screens >= 650px */}
-                    <div className="hidden min-[650px]:flex w-full h-[450px] overflow-hidden gap-2">
+                    <div className=" flex w-full h-[450px] overflow-hidden gap-2">
                       {catData?.data?.map((item, index) => {
                         const isHovered = hovered === index;
                         const isAnyHovered = hovered !== null;
