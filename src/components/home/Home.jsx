@@ -8,15 +8,50 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import imgg from "../../assets/images/elecAcc.jpg";
 import { AuthContext } from "../context/AuthContext";
+
+// Category descriptions object
+const categoryDescriptions = {
+  default:
+    "Welcome to our platform — your trusted destination for booking services like repairs, and more. We connect you with verified professionals, offer secure payments, and ensure a smooth experience. Browse categories, check ratings, and book easily. Quality, convenience, and reliability — all in one place, just for you.",
+  Electricity:
+    "WorkHive connects you with certified electricians for safe and efficient electrical work. From installations to repairs, we handle lighting, sockets, circuit breakers, and full rewiring. We ensure compliance with safety standards, offering timely services for homes, offices, and renovations to keep your property powered and secure.",
+  Plumbing:
+    "Our plumbing professionals fix leaks, install pipes, unclog drains, and manage full bathroom and kitchen setups. Whether it’s emergency repairs or planned installations, WorkHive guarantees clean, reliable, and long-lasting solutions. Get fast, expert plumbing help tailored to your home’s needs with just a few clicks.",
+  Appliances:
+    "Need appliance repairs or installation? WorkHive connects you with technicians for refrigerators, washing machines, ovens, and more. We troubleshoot and fix issues quickly, ensuring your devices run safely and efficiently. Count on us for dependable, in-home appliance services at your convenience.",
+  Carpentry:
+    "Hire skilled carpenters for custom furniture, wood repairs, and installations. WorkHive offers expert craftsmanship for doors, windows, closets, and decorative woodwork. We turn your ideas into reality with precision and quality finishes, whether it’s a new build, renovation, or creative project.",
+  Painting:
+    "Refresh your space with professional painters from WorkHive. We handle interior and exterior painting, texture finishes, and wall treatments. Our team ensures clean, even coats, color consultation, and durable results using top-quality materials, delivering a beautiful, renewed environment that reflects your style.",
+  Alumetal:
+    "For stylish, durable aluminum and metalwork, WorkHive offers expert fabrication and installation. Services include kitchen cabinets, doors, windows, and partitions. We focus on modern designs, lasting materials, and smooth finishes to improve your home’s aesthetics and performance with professional metal solutions.",
+  Tiling:
+    "Get flawless tile work for walls, floors, kitchens, and bathrooms. WorkHive’s tilers specialize in ceramic, porcelain, marble, and mosaic applications. We guarantee smooth alignment, strong adhesion, and clean finishes to enhance the beauty and functionality of your space with professional precision.",
+  "A/C":
+    "WorkHive offers expert air conditioning installation, repair, and maintenance services. Whether it’s split systems or central units, our professionals ensure optimal cooling and energy efficiency. We handle cleaning, gas refills, and performance tuning to keep your space comfortable year-round with minimal hassle.",
+};
+
 export default function Home() {
   const { token } = useContext(AuthContext);
   const { getCategories, catData, loading } = useCategories();
   const [hovered, setHovered] = useState(null);
   const [activeAccordion, setActiveAccordion] = useState(null);
+  const [currentDescription, setCurrentDescription] = useState(
+    categoryDescriptions.default
+  );
 
   useEffect(() => {
     getCategories();
   }, []);
+
+  useEffect(() => {
+    if (catData?.data) {
+      console.log(
+        "Available categories:",
+        catData.data.map((cat) => cat.name)
+      );
+    }
+  }, [catData]);
 
   const faqData = [
     {
@@ -55,6 +90,22 @@ export default function Home() {
     setActiveAccordion(activeAccordion === id ? null : id);
   };
 
+  const handleCategoryHover = (category) => {
+    console.log("Hovering over category:", category.name);
+    setHovered(category.index);
+    // Get the base category name (first word) to match our descriptions object
+    const baseCategoryName = category.name.split(" ")[0];
+    console.log("Looking up description for:", baseCategoryName);
+    setCurrentDescription(
+      categoryDescriptions[baseCategoryName] || categoryDescriptions.default
+    );
+  };
+
+  const handleCategoryLeave = () => {
+    setHovered(null);
+    setCurrentDescription(categoryDescriptions.default);
+  };
+
   return (
     <>
       {loading ? (
@@ -83,13 +134,11 @@ export default function Home() {
                         for you.
                       </span>{" "}
                     </h1>
-                    <p id="home-description" className="my-5 text-slate-700 text-xl">
-                      Welcome to our platform — your trusted destination for
-                      booking services like repairs, and more. We connect you
-                      with verified professionals, offer secure payments, and
-                      ensure a smooth experience. Browse categories, check
-                      ratings, and book easily. Quality, convenience, and
-                      reliability — all in one place, just for you.
+                    <p
+                      id="home-description"
+                      className="my-5 text-slate-700 text-xl transition-all duration-300"
+                    >
+                      {currentDescription}
                     </p>
                     <Link
                       to={"about"}
@@ -125,8 +174,10 @@ export default function Home() {
                                   : "flex-[0.5]"
                                 : "flex-1"
                             }`}
-                            onMouseEnter={() => setHovered(index)}
-                            onMouseLeave={() => setHovered(null)}
+                            onMouseEnter={() =>
+                              handleCategoryHover({ ...item, index })
+                            }
+                            onMouseLeave={handleCategoryLeave}
                           >
                             <img
                               src={item.static_image}
