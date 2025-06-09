@@ -1,6 +1,7 @@
 import React from "react";
 import aboutImg from "../../assets/images/about.jpg";
 import avatarImg from "../../assets/images/avatar.svg";
+import pp from '../../assets/images/515.jpg'
 
 export default function ProviderDetails({ pro, rev }) {
   let rating = Math.round(parseFloat(pro?.data.rating) || 0);
@@ -18,7 +19,7 @@ export default function ProviderDetails({ pro, rev }) {
               <div className="pro md:flex md:gap-5">
                 <div className="proImg w-1/2">
                   <img
-                    src={pro?.data.profile_picture}
+                    src={pp}
                     className=" rounded-lg"
                     alt=""
                   />

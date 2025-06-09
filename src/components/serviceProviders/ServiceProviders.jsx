@@ -3,6 +3,7 @@ import useProviders from "../../Hooks/useProviders";
 import ProviderDetails from "../providerDetails/ProviderDetails";
 import { Link } from "react-router-dom";
 import { Blocks } from "react-loader-spinner";
+import pp from '../../assets/images/515.jpg'
 
 export default function ServiceProviders() {
   const { getServiceProviders, catName, providers, loading } = useProviders();
@@ -34,10 +35,10 @@ export default function ServiceProviders() {
                 return (
                   <>
                     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-                      <a href="#">
+                      <a href="#" className="">
                         <img
-                          className="rounded-t-lg"
-                          src={pro.profile_picture}
+                          className="rounded-t-lg "
+                          src={pp}
                           alt=""
                         />
                       </a>
