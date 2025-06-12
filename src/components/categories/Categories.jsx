@@ -26,7 +26,14 @@ export default function Categories() {
         <>
           <section className="py-28">
             <div className="container">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <p className="text-center text-blue-950 font-semibold text-xl">
+                Categories
+              </p>
+              <h1 className="text-4xl font-bold text-center">
+                Everything Your Home{" "}
+                <span className="text-blue-800">Needs.</span>
+              </h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
                 {catData?.data?.map((cat) => {
                   return (
                     <>
