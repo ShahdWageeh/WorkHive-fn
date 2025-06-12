@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import useCategories from "../../Hooks/useCategories";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function JoinProvider() {
   const [step, setStep] = useState(1);
@@ -10,6 +11,7 @@ export default function JoinProvider() {
   const [profilePreview, setProfilePreview] = useState(null);
   const [frontIdPreview, setFrontIdPreview] = useState(null);
   const [backIdPreview, setBackIdPreview] = useState(null);
+  const [additionalFilePreview, setAdditionalFilePreview] = useState(null);
 
   useEffect(() => {
     getCategories();
@@ -21,6 +23,7 @@ export default function JoinProvider() {
         'Content-Type': 'multipart/form-data',
       }})
       console.log(res)
+      toast.success('تم ملئ الاستمارة بنجاح')
     } catch (error) {
       console.log(error)
     }
@@ -100,7 +103,7 @@ export default function JoinProvider() {
   };
 
   const steps = [
-    { number: 1, title: "Personal Info" },
+    { number: 1, title: "Personal" },
     { number: 2, title: "Documents" },
     { number: 3, title: "Work Details" },
     { number: 4, title: "Final Step" },
@@ -328,6 +331,47 @@ export default function JoinProvider() {
                   {formik.errors.photo}
                 </div>
               )}
+            </div>
+
+            {/* Additional File Upload */}
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Additional Document مستند إضافي (يرجي رفع صورة فيش و تشبيه)
+              </label>
+              <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors">
+                <div className="space-y-1 text-center">
+                  {additionalFilePreview ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <i className="fas fa-file text-4xl text-blue-500"></i>
+                      <span className="text-sm text-gray-600">{additionalFilePreview.name}</span>
+                    </div>
+                  ) : (
+                    <i className="fas fa-file-upload text-6xl text-gray-400"></i>
+                  )}
+                  <div className="flex text-sm text-gray-600">
+                    <label
+                      htmlFor="additional_file"
+                      className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+                    >
+                      <span>Upload a file</span>
+                      <input
+                        id="additional_file"
+                        type="file"
+                        className="sr-only"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            setAdditionalFilePreview(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    PDF, DOC, DOCX up to 10MB
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* ID Photos Upload */}

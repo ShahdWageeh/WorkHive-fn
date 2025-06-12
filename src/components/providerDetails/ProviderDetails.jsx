@@ -11,7 +11,7 @@ export default function ProviderDetails({ pro, rev }) {
     <>
       <section className="pt-32 ">
         <div className="container">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-8">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-8 justify-center">
             <div className="lg:col-span-1 lg:border-r-2 lg:border-r-slate-100 lg:pr-3">
               <h1 className="text-3xl mb-4 font-semibold text-blue-800">
                 Service provider Details
@@ -56,7 +56,7 @@ export default function ProviderDetails({ pro, rev }) {
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-1 sm:mt-5 lg:mt-0 mt-10 lg:mt-0">
+            <div className="lg:col-span-1 sm:mt-5 lg:mt-0 mt-10">
               <h1 className="text-3xl mb-4 font-semibold text-blue-800">
                 Reviews
               </h1>

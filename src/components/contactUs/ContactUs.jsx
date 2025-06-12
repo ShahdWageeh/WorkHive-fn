@@ -40,7 +40,7 @@ export default function ContactUs() {
           </h1>
           <div className="lg:flex lg:items-center">
             <div className="lg:w-3/5">
-              <form onSubmit={Formik.handleSubmit}>
+              <form onSubmit={Formik.handleSubmit} className="mt-8 lg:mt-0">
                 <div className="mb-6">
                   <input
                     name="name"
