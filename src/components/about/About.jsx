@@ -3,9 +3,9 @@ import React from 'react';
 export default function About() {
   return (
     <div className="max-w-7xl mx-auto p-8">
-      <section className="text-center mb-16 py-16 bg-gradient-to-r from-gray-50 to-gray-200 rounded-lg">
-        <h1 className="text-center text-blue-950 font-semibold text-xl">About</h1>
-        <p className="text-4xl font-bold text-center">Connecting Talent, <span className='text-blue-800'>Building Futures</span></p>
+      <section className="text-center mb-16 py-32 bg-landing bg-fixed rounded-lg">
+        <h1 className="text-center text-white font-semibold text-xl">About</h1>
+        <p className="text-4xl font-bold text-center text-white">Connecting Talent, <span className='text-blue-800'>Building Futures</span></p>
       </section>
 
       <section className="mb-16 p-8 bg-white rounded-lg shadow-lg">
