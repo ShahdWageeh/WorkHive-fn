@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   assetsInclude: ['**/*.svg'],
   plugins: [react()],
-  base: '/',
+  base: './',
   build: {
     outDir: 'dist',
     sourcemap: false,
