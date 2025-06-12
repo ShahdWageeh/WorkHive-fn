@@ -1,17 +1,24 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import avatar from "../../assets/images/avatar.svg";
 import logo from "../../assets/images/logo.png";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "./../context/AuthContext";
+import { initializeFlowbite } from "../../utils/flowbiteInit";
 
 export default function Navbar() {
   let { token, setToken, decoded } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    initializeFlowbite();
+  }, []);
+
   function logout() {
     localStorage.removeItem("token");
     setToken(null);
     navigate("/login");
   }
+
   return (
     <>
       <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 right-0 shadow-md z-[999]">
@@ -158,7 +165,7 @@ export default function Navbar() {
             className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
             id="navbar-user"
           >
-            <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
               <li>
                 <NavLink
                   to=""
