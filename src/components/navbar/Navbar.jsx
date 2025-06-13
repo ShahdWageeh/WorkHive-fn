@@ -52,7 +52,7 @@ export default function Navbar() {
                 </button>
                 {/* Dropdown menu */}
                 <div
-                  className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
+                  className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600 absolute right-0 mt-2 w-48"
                   id="user-dropdown"
                 >
                   <div className="px-4 py-3">
@@ -72,6 +72,12 @@ export default function Navbar() {
                             isActive ? "bg-gray-100 text-blue-700" : ""
                           }`
                         }
+                        onClick={() => {
+                          const dropdown = document.getElementById('user-dropdown');
+                          if (dropdown) {
+                            dropdown.classList.add('hidden');
+                          }
+                        }}
                       >
                         Dashboard
                       </NavLink>
@@ -84,6 +90,12 @@ export default function Navbar() {
                             isActive ? "bg-gray-100 text-blue-700" : ""
                           }`
                         }
+                        onClick={() => {
+                          const dropdown = document.getElementById('user-dropdown');
+                          if (dropdown) {
+                            dropdown.classList.add('hidden');
+                          }
+                        }}
                       >
                         Update your Data
                       </NavLink>
@@ -96,14 +108,26 @@ export default function Navbar() {
                             isActive ? "bg-gray-100 text-blue-700" : ""
                           }`
                         }
+                        onClick={() => {
+                          const dropdown = document.getElementById('user-dropdown');
+                          if (dropdown) {
+                            dropdown.classList.add('hidden');
+                          }
+                        }}
                       >
                         Update your Password
                       </NavLink>
                     </li>
                     <li>
                       <button
-                        onClick={logout}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                        onClick={() => {
+                          logout();
+                          const dropdown = document.getElementById('user-dropdown');
+                          if (dropdown) {
+                            dropdown.classList.add('hidden');
+                          }
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                       >
                         Sign out
                       </button>
