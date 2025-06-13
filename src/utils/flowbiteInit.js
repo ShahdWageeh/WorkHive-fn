@@ -1,4 +1,4 @@
-import { initFlowbite, Dropdown } from 'flowbite';
+import { initFlowbite } from 'flowbite';
 
 // Initialize Flowbite components
 export const initializeFlowbite = () => {
@@ -20,23 +20,23 @@ export const initializeFlowbite = () => {
   const userDropdown = document.getElementById('user-dropdown');
 
   if (userMenuButton && userDropdown) {
-    const dropdown = new Dropdown(userDropdown, userMenuButton, {
-      placement: 'bottom',
-      offsetSkidding: 0,
-      offsetDistance: 10,
-      delay: 300,
-      onHide: () => {
-        userMenuButton.setAttribute('aria-expanded', 'false');
-      },
-      onShow: () => {
-        userMenuButton.setAttribute('aria-expanded', 'true');
-      }
-    });
-
     // Add click event listener for mobile
     userMenuButton.addEventListener('click', (e) => {
       e.preventDefault();
-      dropdown.toggle();
+      e.stopPropagation();
+      userDropdown.classList.toggle('hidden');
+      
+      // Update aria-expanded
+      const isExpanded = userDropdown.classList.contains('hidden') ? 'false' : 'true';
+      userMenuButton.setAttribute('aria-expanded', isExpanded);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+        userMenuButton.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 }; 
