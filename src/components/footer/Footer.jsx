@@ -102,9 +102,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 me-4 md:me-6">
+                <Link to={'/userPolicy'} className="hover:text-blue-400 me-4 md:me-6">
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to={'/#faqs'} className="hover:text-blue-400">
