@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import useCategories from "../../Hooks/useCategories";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 export default function JoinProvider() {
   const [step, setStep] = useState(1);
@@ -336,7 +337,7 @@ export default function JoinProvider() {
             {/* Additional File Upload */}
             <div className="space-y-4">
               <label className="block text-sm font-medium text-gray-700">
-                Additional Document مستند إضافي (يرجي رفع صورة فيش و تشبيه)
+                Additional Document مستند إضافي ( يرجي رفع صورة فيش و تشبيه و اعمالك السابقة)
               </label>
               <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors">
                 <div className="space-y-1 text-center">
@@ -644,13 +645,9 @@ export default function JoinProvider() {
                   </label>
                   <p className="text-sm text-gray-500 mt-1">
                     By selecting this, you agree to our{" "}
-                    <a href="#" className="text-blue-600 hover:text-blue-500">
-                      privacy policy
-                    </a>{" "}
-                    and{" "}
-                    <a href="#" className="text-blue-600 hover:text-blue-500">
+                    <Link to={'/proPolicy'} className="text-blue-600 hover:text-blue-500">
                       terms of service
-                    </a>
+                    </Link>
                     .
                   </p>
                 </div>

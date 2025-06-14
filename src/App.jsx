@@ -23,7 +23,8 @@ import About from "./components/about/About";
 import Success from "./components/success/Success";
 import ChatWidget from './components/chatWidget/ChatWidget';
 import { ChatProvider } from './components/context/ChatContext';
-
+import UserPolicy from "./components/policies/UserPolicy";
+import ProPolicy from './components/policies/ProPolicy';
 const routes = createBrowserRouter([
   {path:'', element: <Layout/>, children:[
     {path:'', element: <Home/>},
@@ -43,6 +44,8 @@ const routes = createBrowserRouter([
     {path:'joinProvider', element: <JoinProvider/>},
     {path:'about', element: <About/>},
     {path:'success', element: <Success/>},
+    {path:'userPolicy', element: <UserPolicy/>},
+    {path:'proPolicy', element: <ProPolicy/>},
   ]}
 ])
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import registerImg from "../../assets/images/register.png";
 
 export default function Register() {
@@ -297,12 +297,12 @@ export default function Register() {
                     className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                   >
                     I agree with the{" "}
-                    <a
-                      href="#"
+                    <Link
+                      to={'/userPolicy'}
                       className="text-blue-600 hover:underline dark:text-blue-500"
                     >
                       terms and conditions
-                    </a>
+                    </Link>
                     .
                   </label>
                 </div>
