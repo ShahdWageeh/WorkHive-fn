@@ -22,6 +22,8 @@ import JoinProvider from "./components/joinProvider/JoinProvider";
 import About from "./components/about/About";
 import Success from "./components/success/Success";
 import ChatWidget from './components/chatWidget/ChatWidget';
+import { ChatProvider } from './components/context/ChatContext';
+
 const routes = createBrowserRouter([
   {path:'', element: <Layout/>, children:[
     {path:'', element: <Home/>},
@@ -43,15 +45,16 @@ const routes = createBrowserRouter([
     {path:'success', element: <Success/>},
   ]}
 ])
+
 function App() {
   return (
-    <>
     <AuthContextProvider>
-      <RouterProvider router={routes}></RouterProvider>
-      <Toaster/>
-      <ChatWidget />
+      <ChatProvider>
+        <RouterProvider router={routes}></RouterProvider>
+        <Toaster/>
+        <ChatWidget />
+      </ChatProvider>
     </AuthContextProvider>
-    </>
   );
 }
 

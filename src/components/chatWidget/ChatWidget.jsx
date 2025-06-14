@@ -1,126 +1,21 @@
-import React, { useState, useRef, useContext, useEffect } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { IoMdChatboxes } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import { IoAttach, IoImage, IoSend } from "react-icons/io5";
 import avatar from "../../assets/images/avatar.svg";
 import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
+import { useChat } from "../context/ChatContext";
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [attachmentPreview, setAttachmentPreview] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [conversationId, setConversationId] = useState(null);
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
   const { token } = useContext(AuthContext);
+  const { messages, sendMessage } = useChat();
 
-  // Function to create or retrieve conversation
-  const initializeConversation = async () => {
-    try {
-      // Check if we already have a conversation ID in localStorage
-      const storedConversationId = localStorage.getItem('conversationId');
-      
-      if (storedConversationId) {
-        // Verify if the stored conversation is still valid
-        try {
-          await axios.get(
-            `https://work-hive-project.vercel.app/api/v1/messages/${storedConversationId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
-          );
-          setConversationId(storedConversationId);
-          return storedConversationId;
-        } catch (error) {
-          localStorage.removeItem('conversationId');
-        }
-      }
-
-      // Create a new conversation
-      const response = await axios.post(
-        'https://work-hive-project.vercel.app/api/v1/conversations',
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
-      // Handle different response formats
-      let newConversationId;
-      if (response.data?.conversationId) {
-        newConversationId = response.data.conversationId;
-      } else if (response.data?.data?.id) {
-        newConversationId = response.data.data.id;
-      } else if (response.data?.id) {
-        newConversationId = response.data.id;
-      }
-
-      if (newConversationId) {
-        setConversationId(newConversationId);
-        localStorage.setItem('conversationId', newConversationId);
-        return newConversationId;
-      }
-
-      throw new Error('Invalid response format from server');
-    } catch (error) {
-      console.error('Error initializing conversation:', error.response?.data || error.message);
-      return null;
-    }
-  };
-
-  // Function to fetch messages
-  const fetchMessages = async (convId) => {
-    if (!convId) return;
-    
-    try {
-      const response = await axios.get(
-        `https://work-hive-project.vercel.app/api/v1/messages/${convId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      if (response.data?.data) {
-        setMessages(Array.isArray(response.data.data) ? response.data.data : []);
-      }
-    } catch (error) {
-      console.error('Error fetching messages:', error.response?.data || error.message);
-      setMessages([]); // Set empty array on error
-    }
-  };
-
-  // Set up polling for messages
-  useEffect(() => {
-    let intervalId;
-    if (isOpen && conversationId) {
-      // Initial fetch
-      fetchMessages(conversationId);
-      
-      // Set up polling every 3 seconds
-      intervalId = setInterval(() => {
-        fetchMessages(conversationId);
-      }, 3000);
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [isOpen, conversationId, token]);
-
-  const toggleChat = async () => {
-    if (!isOpen) {
-      // Initialize conversation when opening chat
-      await initializeConversation();
-    }
+  const toggleChat = () => {
     setIsOpen(!isOpen);
   };
 
@@ -157,94 +52,15 @@ const ChatWidget = () => {
   const handleSend = async () => {
     if (!message && !attachmentPreview) return;
 
-    try {
-      // Always ensure we have a valid conversation ID
-      let currentConversationId = conversationId;
-      
-      if (!currentConversationId) {
-        currentConversationId = await initializeConversation();
-        
-        if (!currentConversationId) {
-          console.error('Failed to initialize conversation');
-          return;
-        }
-      }
-
-      const messageData = {
-        conversation_id: currentConversationId,
-        content: message,
-        imageUrl: null
-      };
-
-      const response = await axios.post(
-        'https://work-hive-project.vercel.app/api/v1/messages',
-        messageData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
-      if (response.data?.data) {
-        // Clear the input and preview
-        setMessage("");
-        setAttachmentPreview(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-        if (imageInputRef.current) imageInputRef.current.value = "";
-
-        // Fetch updated messages
-        fetchMessages(currentConversationId);
-      }
-    } catch (error) {
-      console.error('Error sending message:', error.response?.data || error.message);
-      
-      // If we get a "Conversation not found" error, try to reinitialize
-      if (error.response?.data?.message === "Conversation not found.") {
-        const newConversationId = await initializeConversation();
-        
-        if (newConversationId) {
-          // Retry sending the message with the new conversation ID
-          const retryMessageData = {
-            conversation_id: newConversationId,
-            content: message,
-            imageUrl: null
-          };
-          
-          try {
-            const retryResponse = await axios.post(
-              'https://work-hive-project.vercel.app/api/v1/messages',
-              retryMessageData,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              }
-            );
-            
-            if (retryResponse.data?.data) {
-              // Clear the input and preview
-              setMessage("");
-              setAttachmentPreview(null);
-              if (fileInputRef.current) fileInputRef.current.value = "";
-              if (imageInputRef.current) imageInputRef.current.value = "";
-
-              // Fetch updated messages
-              fetchMessages(newConversationId);
-            }
-          } catch (retryError) {
-            console.error('Error retrying message send:', retryError.response?.data || retryError.message);
-          }
-        }
-      }
+    const success = await sendMessage(message, attachmentPreview?.url);
+    
+    if (success) {
+      setMessage("");
+      setAttachmentPreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      if (imageInputRef.current) imageInputRef.current.value = "";
     }
   };
-
-  useEffect(() => {
-    if(localStorage.getItem('conversationId')){
-      setConversationId(localStorage.getItem('conversationId'));
-    }
-  },[])
 
   return (
     <>
@@ -321,7 +137,6 @@ const ChatWidget = () => {
                   />
                   <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
                     <p>Hi, How can we help you?</p>
-                    <span className="text-xs text-gray-500">Just now</span>
                   </div>
                 </div>
               )}
