@@ -110,5 +110,4 @@ netlify deploy
 - Axios
 - React Router
 - React Hot Toast
-"# WorkHive-" 
 "# WorkHive-fn" 
