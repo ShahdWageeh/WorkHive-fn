@@ -1,19 +1,126 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import { IoMdChatboxes } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import { IoAttach, IoImage, IoSend } from "react-icons/io5";
 import avatar from "../../assets/images/avatar.svg";
 import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [attachmentPreview, setAttachmentPreview] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [conversationId, setConversationId] = useState(null);
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
   const { token } = useContext(AuthContext);
 
-  const toggleChat = () => {
+  // Function to create or retrieve conversation
+  const initializeConversation = async () => {
+    try {
+      // Check if we already have a conversation ID in localStorage
+      const storedConversationId = localStorage.getItem('conversationId');
+      
+      if (storedConversationId) {
+        // Verify if the stored conversation is still valid
+        try {
+          await axios.get(
+            `https://work-hive-project.vercel.app/api/v1/messages/${storedConversationId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+          setConversationId(storedConversationId);
+          return storedConversationId;
+        } catch (error) {
+          localStorage.removeItem('conversationId');
+        }
+      }
+
+      // Create a new conversation
+      const response = await axios.post(
+        'https://work-hive-project.vercel.app/api/v1/conversations',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Handle different response formats
+      let newConversationId;
+      if (response.data?.conversationId) {
+        newConversationId = response.data.conversationId;
+      } else if (response.data?.data?.id) {
+        newConversationId = response.data.data.id;
+      } else if (response.data?.id) {
+        newConversationId = response.data.id;
+      }
+
+      if (newConversationId) {
+        setConversationId(newConversationId);
+        localStorage.setItem('conversationId', newConversationId);
+        return newConversationId;
+      }
+
+      throw new Error('Invalid response format from server');
+    } catch (error) {
+      console.error('Error initializing conversation:', error.response?.data || error.message);
+      return null;
+    }
+  };
+
+  // Function to fetch messages
+  const fetchMessages = async (convId) => {
+    if (!convId) return;
+    
+    try {
+      const response = await axios.get(
+        `https://work-hive-project.vercel.app/api/v1/messages/${convId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      if (response.data?.data) {
+        setMessages(Array.isArray(response.data.data) ? response.data.data : []);
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error.response?.data || error.message);
+      setMessages([]); // Set empty array on error
+    }
+  };
+
+  // Set up polling for messages
+  useEffect(() => {
+    let intervalId;
+    if (isOpen && conversationId) {
+      // Initial fetch
+      fetchMessages(conversationId);
+      
+      // Set up polling every 3 seconds
+      intervalId = setInterval(() => {
+        fetchMessages(conversationId);
+      }, 3000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isOpen, conversationId, token]);
+
+  const toggleChat = async () => {
+    if (!isOpen) {
+      // Initialize conversation when opening chat
+      await initializeConversation();
+    }
     setIsOpen(!isOpen);
   };
 
@@ -21,21 +128,21 @@ const ChatWidget = () => {
     const file = event.target.files[0];
     if (file) {
       if (file.type.startsWith("image/")) {
-        // If it's an image, create a preview
         const reader = new FileReader();
         reader.onload = (e) => {
           setAttachmentPreview({
             type: "image",
             url: e.target.result,
             name: file.name,
+            file: file
           });
         };
         reader.readAsDataURL(file);
       } else {
-        // If it's a regular file, just store the name
         setAttachmentPreview({
           type: "file",
           name: file.name,
+          file: file
         });
       }
     }
@@ -47,17 +154,97 @@ const ChatWidget = () => {
     imageInputRef.current.value = "";
   };
 
-  const handleSend = () => {
-    // Here you would typically send the message and attachment to your backend
-    console.log("Sending message:", message);
-    console.log("Attachment:", attachmentPreview);
+  const handleSend = async () => {
+    if (!message && !attachmentPreview) return;
 
-    // Clear the input and preview
-    setMessage("");
-    setAttachmentPreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    if (imageInputRef.current) imageInputRef.current.value = "";
+    try {
+      // Always ensure we have a valid conversation ID
+      let currentConversationId = conversationId;
+      
+      if (!currentConversationId) {
+        currentConversationId = await initializeConversation();
+        
+        if (!currentConversationId) {
+          console.error('Failed to initialize conversation');
+          return;
+        }
+      }
+
+      const messageData = {
+        conversation_id: currentConversationId,
+        content: message,
+        imageUrl: null
+      };
+
+      const response = await axios.post(
+        'https://work-hive-project.vercel.app/api/v1/messages',
+        messageData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data?.data) {
+        // Clear the input and preview
+        setMessage("");
+        setAttachmentPreview(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        if (imageInputRef.current) imageInputRef.current.value = "";
+
+        // Fetch updated messages
+        fetchMessages(currentConversationId);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error.response?.data || error.message);
+      
+      // If we get a "Conversation not found" error, try to reinitialize
+      if (error.response?.data?.message === "Conversation not found.") {
+        const newConversationId = await initializeConversation();
+        
+        if (newConversationId) {
+          // Retry sending the message with the new conversation ID
+          const retryMessageData = {
+            conversation_id: newConversationId,
+            content: message,
+            imageUrl: null
+          };
+          
+          try {
+            const retryResponse = await axios.post(
+              'https://work-hive-project.vercel.app/api/v1/messages',
+              retryMessageData,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              }
+            );
+            
+            if (retryResponse.data?.data) {
+              // Clear the input and preview
+              setMessage("");
+              setAttachmentPreview(null);
+              if (fileInputRef.current) fileInputRef.current.value = "";
+              if (imageInputRef.current) imageInputRef.current.value = "";
+
+              // Fetch updated messages
+              fetchMessages(newConversationId);
+            }
+          } catch (retryError) {
+            console.error('Error retrying message send:', retryError.response?.data || retryError.message);
+          }
+        }
+      }
+    }
   };
+
+  useEffect(() => {
+    if(localStorage.getItem('conversationId')){
+      setConversationId(localStorage.getItem('conversationId'));
+    }
+  },[])
 
   return (
     <>
@@ -87,17 +274,57 @@ const ChatWidget = () => {
 
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              <div className="flex items-start gap-2">
-                <img
-                  src={avatar}
-                  alt="Agent"
-                  className="w-8 h-8 rounded-full"
-                />
-                <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                  <p>Hi, How can we help you?</p>
-                  <span className="text-xs text-gray-500">2 min ago</span>
+              {Array.isArray(messages) && messages.length > 0 ? (
+                messages.map((msg, index) => (
+                  <div 
+                    key={index} 
+                    className={`flex items-start gap-2 ${
+                      msg.sender_type === 'user' ? 'justify-end' : 'justify-start'
+                    }`}
+                  >
+                    {msg.sender_type !== 'user' && (
+                      <img
+                        src={avatar}
+                        alt="Agent"
+                        className="w-8 h-8 rounded-full"
+                      />
+                    )}
+                    <div className={`rounded-lg p-3 max-w-[80%] ${
+                      msg.sender_type === 'user' 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-100'
+                    }`}>
+                      <p>{msg.content}</p>
+                      {msg.imageUrl && (
+                        <img 
+                          src={msg.imageUrl} 
+                          alt="Message attachment" 
+                          className="mt-2 max-w-full rounded"
+                        />
+                      )}
+                    </div>
+                    {msg.sender_type === 'user' && (
+                      <img
+                        src={avatar}
+                        alt="User"
+                        className="w-8 h-8 rounded-full"
+                      />
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-start gap-2">
+                  <img
+                    src={avatar}
+                    alt="Agent"
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
+                    <p>Hi, How can we help you?</p>
+                    <span className="text-xs text-gray-500">Just now</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Attachment Preview */}
@@ -138,6 +365,11 @@ const ChatWidget = () => {
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type your message..."
                     className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:border-blue-500"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSend();
+                      }
+                    }}
                   />
                   <button
                     onClick={() => fileInputRef.current.click()}
@@ -188,7 +420,6 @@ const ChatWidget = () => {
           </button>
         )}
       </div>: null}
-      
     </>
   );
 };
