@@ -33,39 +33,60 @@ export const ChatProvider = ({ children }) => {
         }
       }
 
-      // Create a new conversation
-      const response = await axios.post(
-        'https://work-hive-project.vercel.app/api/v1/conversations',
-        {
-          user_id: JSON.parse(localStorage.getItem('user'))?.id || null,
-          status: 'active'
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+      // Get user data from token
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      console.log('Token data:', tokenData);
+
+      try {
+        // First try to create a new conversation
+        const conversationData = {
+          user_id: tokenData.id,
+          status: 'active',
+          type: 'support'
+        };
+
+        console.log('Creating conversation with data:', conversationData);
+
+        const response = await axios.post(
+          'https://work-hive-project.vercel.app/api/v1/conversations',
+          conversationData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
           }
+        );
+
+        console.log('Conversation response:', response.data);
+
+        // If we get a 400 with "conversation already exists", extract the conversation ID from the error response
+        if (response.data?.data?.id) {
+          const newConversationId = response.data.data.id;
+          setConversationId(newConversationId);
+          localStorage.setItem('conversationId', newConversationId);
+          return newConversationId;
         }
-      );
 
-      let newConversationId;
-      if (response.data?.conversationId) {
-        newConversationId = response.data.conversationId;
-      } else if (response.data?.data?.id) {
-        newConversationId = response.data.data.id;
-      } else if (response.data?.id) {
-        newConversationId = response.data.id;
+        throw new Error('Invalid response format from server');
+      } catch (error) {
+        console.error('Error creating conversation:', error);
+        
+        // If we get an error about existing conversation, extract the ID from the error response
+        if (error.response?.data?.data?.id) {
+          const existingConversationId = error.response.data.data.id;
+          setConversationId(existingConversationId);
+          localStorage.setItem('conversationId', existingConversationId);
+          return existingConversationId;
+        }
+
+        throw error;
       }
-
-      if (newConversationId) {
-        setConversationId(newConversationId);
-        localStorage.setItem('conversationId', newConversationId);
-        return newConversationId;
-      }
-
-      throw new Error('Invalid response format from server');
     } catch (error) {
-      console.error('Error initializing conversation:', error.response?.data || error.message);
+      console.error('Error initializing conversation:', error);
+      console.error('Error response data:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Error headers:', error.response?.headers);
       return null;
     }
   };
@@ -104,14 +125,18 @@ export const ChatProvider = ({ children }) => {
         }
       }
 
-      const user = JSON.parse(localStorage.getItem('user'));
+      // Get user data from token
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
       const messageData = {
         conversation_id: currentConversationId,
         content,
         imageUrl,
         sender_type: 'user',
-        sender_id: user?.id || null
+        sender_id: tokenData.id,
+        type: 'text'
       };
+
+      console.log('Sending message with data:', messageData);
 
       const response = await axios.post(
         'https://work-hive-project.vercel.app/api/v1/messages',
@@ -124,25 +149,34 @@ export const ChatProvider = ({ children }) => {
         }
       );
 
+      console.log('Message response:', response.data);
+
       if (response.data?.data) {
         await fetchMessages(currentConversationId);
         return true;
       }
       return false;
     } catch (error) {
-      console.error('Error sending message:', error.response?.data || error.message);
+      console.error('Error sending message:', error);
+      console.error('Error response data:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Error headers:', error.response?.headers);
       
       if (error.response?.data?.message === "Conversation not found.") {
         const newConversationId = await initializeConversation();
         if (newConversationId) {
-          const user = JSON.parse(localStorage.getItem('user'));
+          // Get user data from token
+          const tokenData = JSON.parse(atob(token.split('.')[1]));
           const retryMessageData = {
             conversation_id: newConversationId,
             content,
             imageUrl,
             sender_type: 'user',
-            sender_id: user?.id || null
+            sender_id: tokenData.id,
+            type: 'text'
           };
+          
+          console.log('Retrying message with data:', retryMessageData);
           
           try {
             const retryResponse = await axios.post(
@@ -156,12 +190,17 @@ export const ChatProvider = ({ children }) => {
               }
             );
             
+            console.log('Retry response:', retryResponse.data);
+            
             if (retryResponse.data?.data) {
               await fetchMessages(newConversationId);
               return true;
             }
           } catch (retryError) {
-            console.error('Error retrying message send:', retryError.response?.data || retryError.message);
+            console.error('Error retrying message:', retryError);
+            console.error('Retry error response data:', retryError.response?.data);
+            console.error('Retry error status:', retryError.response?.status);
+            console.error('Retry error headers:', retryError.response?.headers);
           }
         }
       }
