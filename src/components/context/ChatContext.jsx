@@ -36,10 +36,14 @@ export const ChatProvider = ({ children }) => {
       // Create a new conversation
       const response = await axios.post(
         'https://work-hive-project.vercel.app/api/v1/conversations',
-        {},
+        {
+          user_id: JSON.parse(localStorage.getItem('user'))?.id || null,
+          status: 'active'
+        },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
         }
       );
@@ -100,10 +104,13 @@ export const ChatProvider = ({ children }) => {
         }
       }
 
+      const user = JSON.parse(localStorage.getItem('user'));
       const messageData = {
         conversation_id: currentConversationId,
         content,
-        imageUrl
+        imageUrl,
+        sender_type: 'user',
+        sender_id: user?.id || null
       };
 
       const response = await axios.post(
@@ -111,7 +118,8 @@ export const ChatProvider = ({ children }) => {
         messageData,
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
         }
       );
@@ -127,10 +135,13 @@ export const ChatProvider = ({ children }) => {
       if (error.response?.data?.message === "Conversation not found.") {
         const newConversationId = await initializeConversation();
         if (newConversationId) {
+          const user = JSON.parse(localStorage.getItem('user'));
           const retryMessageData = {
             conversation_id: newConversationId,
             content,
-            imageUrl
+            imageUrl,
+            sender_type: 'user',
+            sender_id: user?.id || null
           };
           
           try {
@@ -139,7 +150,8 @@ export const ChatProvider = ({ children }) => {
               retryMessageData,
               {
                 headers: {
-                  Authorization: `Bearer ${token}`
+                  Authorization: `Bearer ${token}`,
+                  'Content-Type': 'application/json'
                 }
               }
             );
