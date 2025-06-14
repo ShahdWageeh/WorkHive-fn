@@ -3,6 +3,7 @@ import avatar from "../../assets/images/avatar.svg";
 import logo from "../../assets/images/logo.png";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "./../context/AuthContext";
+import NotificationDropdown from '../notifications/NotificationDropdown';
 
 export default function Navbar() {
   let { token, setToken, decoded } = useContext(AuthContext);
@@ -45,117 +46,119 @@ export default function Navbar() {
           </Link>
           {/* right side */}
           <div className="flex gap-5 items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            {token ? (
-              <>
-                <i className="fa-solid fa-bell text-2xl text-blue-800 cursor-pointer" />
-                <div className="relative">
-                  <button
-                    type="button"
-                    className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                    id="user-menu-button"
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  >
-                    <span className="sr-only">Open user menu</span>
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src={avatar}
-                      alt="user photo"
-                    />
-                  </button>
-                  {/* Dropdown menu */}
-                  {isDropdownOpen && (
-                    <div
-                      className="z-50 absolute right-0 mt-2 w-48 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
-                      id="user-dropdown"
+            <div className="flex items-center space-x-4">
+              <NotificationDropdown />
+              {token ? (
+                <>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                      id="user-menu-button"
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
-                      <div className="px-4 py-3">
-                        <span className="block text-sm text-gray-900 dark:text-white">
-                          {decoded?.fullname}
-                        </span>
-                        <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
-                          {decoded?.email}
-                        </span>
+                      <span className="sr-only">Open user menu</span>
+                      <img
+                        className="w-8 h-8 rounded-full"
+                        src={avatar}
+                        alt="user photo"
+                      />
+                    </button>
+                    {/* Dropdown menu */}
+                    {isDropdownOpen && (
+                      <div
+                        className="z-50 absolute right-0 mt-2 w-48 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+                        id="user-dropdown"
+                      >
+                        <div className="px-4 py-3">
+                          <span className="block text-sm text-gray-900 dark:text-white">
+                            {decoded?.fullname}
+                          </span>
+                          <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
+                            {decoded?.email}
+                          </span>
+                        </div>
+                        <ul className="py-2" aria-labelledby="user-menu-button">
+                          <li>
+                            <NavLink
+                              to="userProfile"
+                              className={({ isActive }) =>
+                                `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
+                                  isActive ? "bg-gray-100 text-blue-700" : ""
+                                }`
+                              }
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              Dashboard
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="updateData"
+                              className={({ isActive }) =>
+                                `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
+                                  isActive ? "bg-gray-100 text-blue-700" : ""
+                                }`
+                              }
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              Update your Data
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="updatePassword"
+                              className={({ isActive }) =>
+                                `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
+                                  isActive ? "bg-gray-100 text-blue-700" : ""
+                                }`
+                              }
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              Update your Password
+                            </NavLink>
+                          </li>
+                          <li>
+                            <button
+                              onClick={() => {
+                                logout();
+                                setIsDropdownOpen(false);
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                            >
+                              Sign out
+                            </button>
+                          </li>
+                        </ul>
                       </div>
-                      <ul className="py-2" aria-labelledby="user-menu-button">
-                        <li>
-                          <NavLink
-                            to="userProfile"
-                            className={({ isActive }) =>
-                              `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
-                                isActive ? "bg-gray-100 text-blue-700" : ""
-                              }`
-                            }
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            Dashboard
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="updateData"
-                            className={({ isActive }) =>
-                              `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
-                                isActive ? "bg-gray-100 text-blue-700" : ""
-                              }`
-                            }
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            Update your Data
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink
-                            to="updatePassword"
-                            className={({ isActive }) =>
-                              `block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ${
-                                isActive ? "bg-gray-100 text-blue-700" : ""
-                              }`
-                            }
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            Update your Password
-                          </NavLink>
-                        </li>
-                        <li>
-                          <button
-                            onClick={() => {
-                              logout();
-                              setIsDropdownOpen(false);
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                          >
-                            Sign out
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <NavLink
-                  to="login"
-                  className={({ isActive }) =>
-                    ` hidden md:block py-2 px-3 font-semibold rounded-sm md:bg-transparent hover:text-blue-700 hover:underline md:dark:text-blue-500 ${
-                      isActive ? "text-blue-700" : "text-black"
-                    }`
-                  }
-                >
-                  Login
-                </NavLink>
-                <NavLink
-                  to="register"
-                  className={({ isActive }) =>
-                    `text-white ${
-                      isActive ? "bg-blue-700" : "bg-blue-800"
-                    } hover:bg-blue-700 hidden md:block focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`
-                  }
-                >
-                  Sign Up
-                </NavLink>
-              </>
-            )}
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <NavLink
+                    to="login"
+                    className={({ isActive }) =>
+                      ` hidden md:block py-2 px-3 font-semibold rounded-sm md:bg-transparent hover:text-blue-700 hover:underline md:dark:text-blue-500 ${
+                        isActive ? "text-blue-700" : "text-black"
+                      }`
+                    }
+                  >
+                    Login
+                  </NavLink>
+                  <NavLink
+                    to="register"
+                    className={({ isActive }) =>
+                      `text-white ${
+                        isActive ? "bg-blue-700" : "bg-blue-800"
+                      } hover:bg-blue-700 hidden md:block focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`
+                    }
+                  >
+                    Sign Up
+                  </NavLink>
+                </>
+              )}
+            </div>
             <button
               type="button"
               className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"

@@ -25,6 +25,8 @@ import ChatWidget from './components/chatWidget/ChatWidget';
 import { ChatProvider } from './components/context/ChatContext';
 import UserPolicy from "./components/policies/UserPolicy";
 import ProPolicy from './components/policies/ProPolicy';
+import { NotificationProvider } from './components/context/NotificationContext';
+import Notifications from './pages/Notifications';
 const routes = createBrowserRouter([
   {path:'', element: <Layout/>, children:[
     {path:'', element: <Home/>},
@@ -46,17 +48,20 @@ const routes = createBrowserRouter([
     {path:'success', element: <Success/>},
     {path:'userPolicy', element: <UserPolicy/>},
     {path:'proPolicy', element: <ProPolicy/>},
+    {path:'notifications', element: <Notifications />},
   ]}
 ])
 
 function App() {
   return (
     <AuthContextProvider>
-      <ChatProvider>
-        <RouterProvider router={routes}></RouterProvider>
-        <Toaster/>
-        <ChatWidget />
-      </ChatProvider>
+      <NotificationProvider>
+        <ChatProvider>
+          <RouterProvider router={routes}></RouterProvider>
+          <Toaster/>
+          <ChatWidget />
+        </ChatProvider>
+      </NotificationProvider>
     </AuthContextProvider>
   );
 }

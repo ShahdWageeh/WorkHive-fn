@@ -1,16 +1,34 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from './AuthContext';
 
 const ChatContext = createContext();
 
+export const useChat = () => {
+  return useContext(ChatContext);
+};
+
 export const ChatProvider = ({ children }) => {
-  const [conversationId, setConversationId] = useState(null);
   const [messages, setMessages] = useState([]);
-  const { token } = useContext(AuthContext);
+  const [conversationId, setConversationId] = useState(null);
+  const { token, decoded } = useContext(AuthContext);
+
+  // Clear conversation when user changes
+  useEffect(() => {
+    if (decoded) {
+      // Clear existing conversation data
+      localStorage.removeItem('conversationId');
+      setConversationId(null);
+      setMessages([]);
+      // Initialize new conversation for the current user
+      initializeConversation();
+    }
+  }, [decoded?.id]);
 
   // Initialize conversation
   const initializeConversation = async () => {
+    if (!token || !decoded) return null;
+
     try {
       // Check if we already have a conversation ID in localStorage
       const storedConversationId = localStorage.getItem('conversationId');
@@ -33,14 +51,10 @@ export const ChatProvider = ({ children }) => {
         }
       }
 
-      // Get user data from token
-      const tokenData = JSON.parse(atob(token.split('.')[1]));
-      console.log('Token data:', tokenData);
-
       try {
         // First try to create a new conversation
         const conversationData = {
-          user_id: tokenData.id,
+          user_id: decoded.id,
           status: 'active',
           type: 'support'
         };
@@ -92,53 +106,41 @@ export const ChatProvider = ({ children }) => {
   };
 
   // Fetch messages
-  const fetchMessages = async (convId) => {
-    if (!convId) return;
-    
+  const fetchMessages = async () => {
+    if (!conversationId || !token) return;
+
     try {
       const response = await axios.get(
-        `https://work-hive-project.vercel.app/api/v1/messages/${convId}`,
+        `https://work-hive-project.vercel.app/api/v1/messages/${conversationId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
           }
         }
       );
-      if (response.data?.data) {
-        setMessages(Array.isArray(response.data.data) ? response.data.data : []);
-      }
+      setMessages(response.data.data);
     } catch (error) {
-      console.error('Error fetching messages:', error.response?.data || error.message);
-      setMessages([]);
+      console.error('Error fetching messages:', error);
     }
   };
 
   // Send message
   const sendMessage = async (content, imageUrl = null) => {
-    try {
-      let currentConversationId = conversationId;
-      
-      if (!currentConversationId) {
-        currentConversationId = await initializeConversation();
-        if (!currentConversationId) {
-          throw new Error('Failed to initialize conversation');
-        }
-      }
+    if (!conversationId || !token || !decoded) {
+      const newConversationId = await initializeConversation();
+      if (!newConversationId) return false;
+    }
 
-      // Get user data from token
-      const tokenData = JSON.parse(atob(token.split('.')[1]));
+    try {
       const messageData = {
-        conversation_id: currentConversationId,
+        conversation_id: conversationId,
         content,
         imageUrl,
         sender_type: 'user',
-        sender_id: tokenData.id,
-        type: 'text'
+        sender_id: decoded.id
       };
 
-      console.log('Sending message with data:', messageData);
-
-      const response = await axios.post(
+      await axios.post(
         'https://work-hive-project.vercel.app/api/v1/messages',
         messageData,
         {
@@ -149,109 +151,31 @@ export const ChatProvider = ({ children }) => {
         }
       );
 
-      console.log('Message response:', response.data);
-
-      if (response.data?.data) {
-        await fetchMessages(currentConversationId);
-        return true;
-      }
-      return false;
+      await fetchMessages();
+      return true;
     } catch (error) {
       console.error('Error sending message:', error);
-      console.error('Error response data:', error.response?.data);
-      console.error('Error status:', error.response?.status);
-      console.error('Error headers:', error.response?.headers);
-      
-      if (error.response?.data?.message === "Conversation not found.") {
-        const newConversationId = await initializeConversation();
-        if (newConversationId) {
-          // Get user data from token
-          const tokenData = JSON.parse(atob(token.split('.')[1]));
-          const retryMessageData = {
-            conversation_id: newConversationId,
-            content,
-            imageUrl,
-            sender_type: 'user',
-            sender_id: tokenData.id,
-            type: 'text'
-          };
-          
-          console.log('Retrying message with data:', retryMessageData);
-          
-          try {
-            const retryResponse = await axios.post(
-              'https://work-hive-project.vercel.app/api/v1/messages',
-              retryMessageData,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-                }
-              }
-            );
-            
-            console.log('Retry response:', retryResponse.data);
-            
-            if (retryResponse.data?.data) {
-              await fetchMessages(newConversationId);
-              return true;
-            }
-          } catch (retryError) {
-            console.error('Error retrying message:', retryError);
-            console.error('Retry error response data:', retryError.response?.data);
-            console.error('Retry error status:', retryError.response?.status);
-            console.error('Retry error headers:', retryError.response?.headers);
-          }
-        }
-      }
       return false;
     }
   };
 
-  // Initialize conversation on mount if token exists
+  // Fetch messages when conversation ID changes
   useEffect(() => {
-    if (token) {
-      initializeConversation();
+    if (conversationId && token) {
+      fetchMessages();
     }
-  }, [token]);
-
-  // Set up polling for messages
-  useEffect(() => {
-    let intervalId;
-    if (conversationId) {
-      // Initial fetch
-      fetchMessages(conversationId);
-      
-      // Set up polling every 3 seconds
-      intervalId = setInterval(() => {
-        fetchMessages(conversationId);
-      }, 3000);
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
   }, [conversationId, token]);
 
+  const value = {
+    messages,
+    sendMessage,
+    conversationId,
+    initializeConversation
+  };
+
   return (
-    <ChatContext.Provider value={{
-      conversationId,
-      messages,
-      sendMessage,
-      fetchMessages,
-      initializeConversation
-    }}>
+    <ChatContext.Provider value={value}>
       {children}
     </ChatContext.Provider>
   );
 };
-
-export const useChat = () => {
-  const context = useContext(ChatContext);
-  if (!context) {
-    throw new Error('useChat must be used within a ChatProvider');
-  }
-  return context;
-}; 
