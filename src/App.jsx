@@ -48,7 +48,7 @@ const routes = createBrowserRouter([
     {path:'success', element: <Success/>},
     {path:'userPolicy', element: <UserPolicy/>},
     {path:'proPolicy', element: <ProPolicy/>},
-    {path:'notifications', element: <Notifications />},
+    {path:'notifications/:id', element: <Notifications />},
   ]}
 ])
 
