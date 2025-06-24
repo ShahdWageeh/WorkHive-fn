@@ -49,7 +49,7 @@ export default function ServiceProviders() {
                           </h5>
                         </a>
                         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                          {pro.bio}
+                          {pro.bio && pro.bio.split(' ').slice(0, 5).join(' ')}{pro.bio && pro.bio.split(' ').length > 5 ? '...' : ''}
                         </p>
                         <Link
                           to={`/providerProfile/${pro.category.id}/${pro.id}`}

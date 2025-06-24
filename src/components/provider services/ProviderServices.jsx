@@ -38,10 +38,10 @@ export default function ProviderServices({ ids }) {
                     </div>
                     <div className="p-6 pb-3">
                       <h5 className="mb-2 block font-sans text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
-                        {ser.name}
+                        {ser.name && ser.name.split(' ').slice(0, 3).join(' ')}{ser.name && ser.name.split(' ').length > 3 ? '...' : ''}
                       </h5>
                       <p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased">
-                        {ser.description}
+                        {ser.description && ser.description.split(' ').slice(0, 5).join(' ')}{ser.description && ser.description.split(' ').length > 5 ? '...' : ''} 
                       </p>
                       <p className="block font-sans mt-3 text-xl font-semibold leading-relaxed text-inherit antialiased">
                         ${ser.price}
